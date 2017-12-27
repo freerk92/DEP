@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace DEP
@@ -11,9 +12,18 @@ namespace DEP
         public Point end;
         // Direction comparing the end point and the start point
         public Direction direction;
-
+        // Color
+        public Pen color;
         public abstract void Draw(PaintEventArgs e);
 
+        public void Move(Point location)
+        {
+            int x = Math.Abs(start.X - end.X);
+            int y = Math.Abs(start.Y - end.Y);
+
+            start = location;
+            end = new Point(location.X + x, location.Y + y);
+        }
 
 
         // Four quadrants in coordinate
@@ -27,28 +37,31 @@ namespace DEP
 
         public class Ellipse : Figure
         {
+            
             // Drawthis by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
+                color = color ?? Pens.Black;
+
                 switch (this.direction)
                 {
                     case Direction.One:
-                        e.Graphics.DrawEllipse(Pens.Black, new Rectangle(new Point(this.start.X,
+                        e.Graphics.DrawEllipse(color, new Rectangle(new Point(this.start.X,
                            this.end.Y), new Size(this.end.X - this.start.X,
                            this.start.Y - this.end.Y)));
                         break;
                     case Direction.Two:
-                        e.Graphics.DrawEllipse(Pens.Black, new Rectangle(this.end,
+                        e.Graphics.DrawEllipse(color, new Rectangle(this.end,
                             new Size(this.start.X - this.end.X,
                                this.start.Y - this.end.Y)));
                         break;
                     case Direction.Three:
-                        e.Graphics.DrawEllipse(Pens.Black, new Rectangle(new Point(this.end.X,
+                        e.Graphics.DrawEllipse(color, new Rectangle(new Point(this.end.X,
                            this.start.Y), new Size(this.start.X - this.end.X,
                            this.end.Y - this.start.Y)));
                         break;
                     case Direction.Four:
-                        e.Graphics.DrawEllipse(Pens.Black, new Rectangle(this.start,
+                        e.Graphics.DrawEllipse(color, new Rectangle(this.start,
                             new Size(this.end.X - this.start.X,
                                this.end.Y - this.start.Y)));
                         break;
@@ -64,25 +77,27 @@ namespace DEP
             // Drawthis by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
+                color = color ?? Pens.Black;
+                
                 switch (this.direction)
                 {
                     case Direction.One:
-                        e.Graphics.DrawRectangle(Pens.Black, new Rectangle(new Point(this.start.X,
+                        e.Graphics.DrawRectangle(color, new Rectangle(new Point(this.start.X,
                             this.end.Y), new Size(this.end.X - this.start.X,
                             this.start.Y - this.end.Y)));
                         break;
                     case Direction.Two:
-                        e.Graphics.DrawRectangle(Pens.Black, new Rectangle(this.end,
+                        e.Graphics.DrawRectangle(color, new Rectangle(this.end,
                             new Size(this.start.X - this.end.X,
                                 this.start.Y - this.end.Y)));
                         break;
                     case Direction.Three:
-                        e.Graphics.DrawRectangle(Pens.Black, new Rectangle(new Point(this.end.X,
+                        e.Graphics.DrawRectangle(color, new Rectangle(new Point(this.end.X,
                             this.start.Y), new Size(this.start.X - this.end.X,
                             this.end.Y - this.start.Y)));
                         break;
                     case Direction.Four:
-                        e.Graphics.DrawRectangle(Pens.Black, new Rectangle(this.start,
+                        e.Graphics.DrawRectangle(color, new Rectangle(this.start,
                             new Size(this.end.X - this.start.X,
                                 this.end.Y - this.start.Y)));
                         break;

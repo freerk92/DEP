@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using static DEP.Figure;
@@ -7,37 +9,6 @@ namespace DEP
 {
     public partial class Form1 : Form
     {
-
-
-        //// Define variables to determine a ellipse
-        //struct Ellipse
-        //{
-        //    // The point user press Mouse Down
-        //    public Point start;
-        //    // The point user let Mouse Up
-        //    public Point end;
-        //    // Direction comparing the end point and the start point
-        //    public Direction direction;
-        //}
-
-        //struct xRectangle
-        //{
-        //    // The point user press Mouse Down
-        //    public Point start;
-        //    // The point user let Mouse Up
-        //    public Point end;
-        //    // Direction comparing the end point and the start point
-        //    public Direction direction;
-        //}
-
-        //// Four quadrants in coordinate
-        //enum Direction
-        //{
-        //    One,
-        //    Two,
-        //    Three,
-        //    Four
-        //}
 
         List<Figure> Figures = new List<Figure>();
 
@@ -93,15 +64,18 @@ namespace DEP
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            foreach (Figure figuretje in Figures)
-            {
-                figuretje.Draw(e);
-            }
-
-
+            this.Refresh();
             if (mDrawing)
             {
                 figure.Draw(e);
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            foreach (Figure figuretje in Figures)
+            {
+                figuretje.Draw(e);
             }
         }
 
@@ -111,19 +85,33 @@ namespace DEP
             {
                 Select_Down(e);
             }
+            else if (Move.Checked)
+            {
+                Move_Down(e);
+            }
             else
             {
                 Figure_Down(e);
             }
         }
 
+        private void Move_Down(MouseEventArgs e)
+        {
+            if (figure != null)
+            {
+                figure.Move(e.Location);
+            }
+
+            this.Refresh();
+        }
+
         private void Select_Down(MouseEventArgs e)
         {
             figure = Figures.FirstOrDefault(figure =>
             {
-                if (Enumerable.Range(figure.start.X, figure.end.X).Contains(e.Location.X))
+                if (Enumerable.Range(figure.start.X, figure.end.X).Contains(e.Location.X) || Enumerable.Range(figure.end.X, figure.start.X).Contains(e.Location.X))
                 {
-                    if (Enumerable.Range(figure.start.Y, figure.end.Y).Contains(e.Location.Y))
+                    if (Enumerable.Range(figure.start.Y, figure.end.Y).Contains(e.Location.Y) || Enumerable.Range(figure.end.Y, figure.start.Y).Contains(e.Location.Y))
                     {
                         return true;
                     }
@@ -135,7 +123,6 @@ namespace DEP
             {
                 Circle.Checked = true;
             }
-
         }
 
 
@@ -185,7 +172,7 @@ namespace DEP
         private void Figure_Move(MouseEventArgs e)
         {
             if (!mDrawing) return;
-            // When Mouse Move, determine the direction of an ellipse 
+            // When Mouse Move, determine the direction of an ellipse
             // constantly
             this.DetermineDirection(e);
             this.Invalidate();

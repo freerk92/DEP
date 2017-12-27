@@ -1,21 +1,17 @@
 ﻿<Properties StartupConfiguration="{548894B3-57D5-43F9-842F-3D094539F290}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="DEP/Form1.Designer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="DEP/Form1.cs">
     <Files>
-      <File FileName="DEP/Program.cs" Line="19" Column="1" />
-      <File FileName="DEP/Figure.cs" Line="69" Column="39" />
-      <File FileName="DEP/KutCLass.cs" Line="1" Column="1" />
-      <File FileName="DEP/Form1.Designer.cs" Line="88" Column="44" />
-      <File FileName="DEP/Form1.resx" Line="1" Column="1" />
-      <File FileName="DEP/Form1.cs" />
+      <File FileName="DEP/Program.cs" Line="17" Column="32" />
+      <File FileName="DEP/Figure.cs" Line="24" Column="30" />
+      <File FileName="DEP/Form1.cs" Line="102" Column="23" />
+      <File FileName="DEP/Form1.Designer.cs" Line="116" Column="57" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="DEP" expanded="True">
             <Node name="DEP" expanded="True">
-              <Node name="Form1.cs" expanded="True">
-                <Node name="Form1.Designer.cs" selected="True" />
-              </Node>
+              <Node name="Form1.cs" expanded="True" selected="True" />
             </Node>
           </Node>
         </State>
@@ -25,8 +21,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/freerkcuperus/GitProjects/DEP/DEP/Form1.cs" relfile="DEP/Form1.cs" line="142" column="1" />
-      <Breakpoint file="/Users/freerkcuperus/GitProjects/DEP/DEP/Form1.cs" relfile="DEP/Form1.cs" line="140" column="1" />
+      <Breakpoint file="/Users/freerkcuperus/GitProjects/DEP/DEP/Form1.cs" relfile="DEP/Form1.cs" line="126" column="1" />
+      <Breakpoint file="/Users/freerkcuperus/GitProjects/DEP/DEP/Form1.cs" relfile="DEP/Form1.cs" line="124" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.ItemProperties.DEP PreferredExecutionTarget="MonoDevelop.Default" />

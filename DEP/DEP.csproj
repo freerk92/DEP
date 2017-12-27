@@ -75,7 +75,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Figure.cs" />
-    <Compile Include="KutCLass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
