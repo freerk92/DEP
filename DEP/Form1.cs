@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static DEP.Figure;
 
@@ -85,7 +79,7 @@ namespace DEP
             }
             else
                 figure.end = e.Location;
-            
+
             if (figure.end.X > figure.start.X && figure.end.Y <= figure.start.Y)
                 figure.direction = Direction.One;
             else if (figure.end.X <= figure.start.X && figure.end.Y < figure.start.Y)
@@ -107,7 +101,7 @@ namespace DEP
 
             if (mDrawing)
             {
-                    figure.Draw(e);
+                figure.Draw(e);
             }
         }
 
@@ -137,7 +131,7 @@ namespace DEP
                 return false;
             });
 
-            if(figure == null)
+            if (figure == null)
             {
                 Circle.Checked = true;
             }
@@ -147,10 +141,12 @@ namespace DEP
 
         private void Figure_Down(MouseEventArgs e)
         {
-            if(Circle.Checked){
+            if (Circle.Checked)
+            {
                 figure = new Ellipse();
             }
-            else{
+            else
+            {
                 figure = new xRectangle();
             }
             figure.start = e.Location;
@@ -194,12 +190,5 @@ namespace DEP
             this.DetermineDirection(e);
             this.Invalidate();
         }
-
-
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
     }
-
 }
