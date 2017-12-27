@@ -32,6 +32,7 @@
             this.Square = new System.Windows.Forms.RadioButton();
             this.Select = new System.Windows.Forms.RadioButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // Circle
@@ -44,7 +45,6 @@
             this.Circle.TabStop = true;
             this.Circle.Text = "Circle";
             this.Circle.UseVisualStyleBackColor = true;
-            this.Circle.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // Square
             // 
@@ -76,11 +76,23 @@
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(196, 3);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(52, 17);
+            this.radioButton1.TabIndex = 4;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Move";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 361);
+            this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.Select);
             this.Controls.Add(this.Square);
             this.Controls.Add(this.Circle);
@@ -103,6 +115,7 @@
         private System.Windows.Forms.RadioButton Square;
         private System.Windows.Forms.RadioButton Select;
         private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.RadioButton radioButton1;
     }
 }
 
