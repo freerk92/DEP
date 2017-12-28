@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using static DEP.Figure;
+using DEP.Commands;
 
 namespace DEP
 {
     public partial class Form1 : Form
     {
+        static Receiver receiver = new Receiver();
+        SaveCommand save = new SaveCommand(receiver);
+        LoadCommand load = new LoadCommand(receiver);
+        UndoCommand undo = new UndoCommand(receiver);
+        RedoCommand redo = new RedoCommand(receiver);
+
+        Invoker inv = new Invoker();
+        
 
         List<Figure> Figures = new List<Figure>();
 
@@ -17,13 +26,13 @@ namespace DEP
 
         public Form1()
         {
+            inv.InsertCommands(save);
+            inv.InsertCommands(load);
+            inv.InsertCommands(undo);
+            inv.InsertCommands(redo);
             InitializeComponent();
         }
-
-
-
-
-
+        
         // Determine the direction of ellipse by start and end points
 
         private void DetermineDirection(MouseEventArgs e)
@@ -72,7 +81,7 @@ namespace DEP
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            foreach (Figure figuretje in Figures)
+            foreach (Figure figuretje in SaveData.Instance.Figures)
             {
                 figuretje.Draw(e);
             }
@@ -157,7 +166,7 @@ namespace DEP
             mDrawing = false;
             this.DetermineDirection(e);
             // Add the newly created ellipse into ellipse list
-            Figures.Add(figure);
+            SaveData.Instance.Figures.Add(figure);
             this.Invalidate();
         }
 
@@ -179,16 +188,34 @@ namespace DEP
 
         private void Save_Click(object sender, EventArgs e)
         {
-            FileManager manager = new FileManager();
-            manager.Save(Figures);
+            inv.PressButtonOn(0);
         }
 
         private void Load_Click(object sender, EventArgs e)
         {
-            FileManager manager = new FileManager();
-            var x = manager.Load();
-            Figures = x;
+            inv.PressButtonOn(1);
+            Figures = SaveData.Instance.Figures;
             Refresh();
+        }
+
+        Stack<Figure> UndoStack = new Stack<Figure>();
+
+        private void Undo_Click(object sender, EventArgs e)
+        {
+            if(SaveData.Instance.Figures.Count > 0)
+            {
+                inv.PressButtonOn(2);
+                Refresh();
+            }
+        }
+
+        private void Redo_Click(object sender, EventArgs e)
+        {
+            if (SaveData.Instance.UndoStack.Count > 0)
+            {
+                inv.PressButtonOn(3);
+                Refresh();
+            }
         }
     }
 }

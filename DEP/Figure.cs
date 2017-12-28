@@ -83,8 +83,8 @@ namespace DEP
                 {
                     case Direction.One:
                         e.Graphics.DrawRectangle(color, new Rectangle(new Point(this.start.X,
-                            this.end.Y), new Size(this.end.X - this.start.X,
-                            this.start.Y - this.end.Y)));
+                           this.end.Y), new Size(this.end.X - this.start.X,
+                           this.start.Y - this.end.Y)));
                         break;
                     case Direction.Two:
                         e.Graphics.DrawRectangle(color, new Rectangle(this.end,

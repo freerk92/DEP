@@ -35,6 +35,8 @@
             this.Move = new System.Windows.Forms.RadioButton();
             this.Save = new System.Windows.Forms.Button();
             this.Load = new System.Windows.Forms.Button();
+            this.Redo = new System.Windows.Forms.Button();
+            this.Undo = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Circle
@@ -51,7 +53,7 @@
             // Square
             // 
             this.Square.AutoSize = true;
-            this.Square.Location = new System.Drawing.Point(69, 3);
+            this.Square.Location = new System.Drawing.Point(12, 26);
             this.Square.Name = "Square";
             this.Square.Size = new System.Drawing.Size(59, 17);
             this.Square.TabIndex = 1;
@@ -62,7 +64,7 @@
             // Select
             // 
             this.Select.AutoSize = true;
-            this.Select.Location = new System.Drawing.Point(135, 3);
+            this.Select.Location = new System.Drawing.Point(12, 49);
             this.Select.Name = "Select";
             this.Select.Size = new System.Drawing.Size(55, 17);
             this.Select.TabIndex = 2;
@@ -72,16 +74,17 @@
             // 
             // menuStrip1
             // 
+            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.Left;
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(536, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(30, 387);
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // Move
             // 
             this.Move.AutoSize = true;
-            this.Move.Location = new System.Drawing.Point(196, 3);
+            this.Move.Location = new System.Drawing.Point(11, 72);
             this.Move.Name = "Move";
             this.Move.Size = new System.Drawing.Size(52, 17);
             this.Move.TabIndex = 4;
@@ -91,7 +94,7 @@
             // 
             // Save
             // 
-            this.Save.Location = new System.Drawing.Point(336, 0);
+            this.Save.Location = new System.Drawing.Point(12, 321);
             this.Save.Name = "Save";
             this.Save.Size = new System.Drawing.Size(75, 23);
             this.Save.TabIndex = 5;
@@ -101,7 +104,7 @@
             // 
             // Load
             // 
-            this.Load.Location = new System.Drawing.Point(429, 1);
+            this.Load.Location = new System.Drawing.Point(12, 350);
             this.Load.Name = "Load";
             this.Load.Size = new System.Drawing.Size(75, 23);
             this.Load.TabIndex = 6;
@@ -109,11 +112,33 @@
             this.Load.UseVisualStyleBackColor = true;
             this.Load.Click += new System.EventHandler(this.Load_Click);
             // 
+            // Redo
+            // 
+            this.Redo.Location = new System.Drawing.Point(12, 229);
+            this.Redo.Name = "Redo";
+            this.Redo.Size = new System.Drawing.Size(75, 23);
+            this.Redo.TabIndex = 7;
+            this.Redo.Text = "Redo";
+            this.Redo.UseVisualStyleBackColor = true;
+            this.Redo.Click += new System.EventHandler(this.Redo_Click);
+            // 
+            // Undo
+            // 
+            this.Undo.Location = new System.Drawing.Point(13, 200);
+            this.Undo.Name = "Undo";
+            this.Undo.Size = new System.Drawing.Size(75, 23);
+            this.Undo.TabIndex = 8;
+            this.Undo.Text = "Undo";
+            this.Undo.UseVisualStyleBackColor = true;
+            this.Undo.Click += new System.EventHandler(this.Undo_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(536, 361);
+            this.ClientSize = new System.Drawing.Size(668, 387);
+            this.Controls.Add(this.Undo);
+            this.Controls.Add(this.Redo);
             this.Controls.Add(this.Load);
             this.Controls.Add(this.Save);
             this.Controls.Add(this.Move);
@@ -142,6 +167,8 @@
         private System.Windows.Forms.RadioButton Move;
         private System.Windows.Forms.Button Save;
         private System.Windows.Forms.Button Load;
+        private System.Windows.Forms.Button Redo;
+        private System.Windows.Forms.Button Undo;
     }
 }
 

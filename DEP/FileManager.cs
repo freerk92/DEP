@@ -14,8 +14,9 @@ namespace DEP
             
         }
 
-        public void Save(List<Figure> figures)
+        public void Save()
         {
+            var figures = SaveData.Instance.Figures;
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
                 dialog.Filter = "txt files (*.txt)|*.txt";
@@ -35,7 +36,7 @@ namespace DEP
             }
         }
 
-        public List<Figure> Load()
+        public void Load()
         {
             var test = new List<Figure>();
             using(OpenFileDialog dialog = new OpenFileDialog())
@@ -53,7 +54,7 @@ namespace DEP
                     }
                 }
             }
-            return test;
+            SaveData.Instance.Figures = test;
         }
 
         private List<Figure> DecryptIO(string x)
