@@ -77,8 +77,8 @@ namespace DEP
             // Drawthis by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
-                color = color ?? Pens.Black;
-                
+                color = new Pen(Brushes.Black);
+                color.Width = 3.0F;
                 switch (this.direction)
                 {
                     case Direction.One:

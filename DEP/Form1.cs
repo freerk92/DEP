@@ -177,14 +177,18 @@ namespace DEP
             this.Invalidate();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Save_Click(object sender, EventArgs e)
         {
-
+            FileManager manager = new FileManager();
+            manager.Save(Figures);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Load_Click(object sender, EventArgs e)
         {
-
+            FileManager manager = new FileManager();
+            var x = manager.Load();
+            Figures = x;
+            Refresh();
         }
     }
 }

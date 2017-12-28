@@ -17,13 +17,12 @@ c:/users/freer/onedrive/documenten/visual studio 2017/Projects/DEP/DEP/obj/Debug
 /Users/freerkcuperus/Downloads/Opdracht 1/dep/DEP/obj/Debug/DEP.csproj.CoreCompileInputs.cache
 /Users/freerkcuperus/Downloads/Opdracht 1/dep/DEP/obj/Debug/DEP.exe
 /Users/freerkcuperus/Downloads/Opdracht 1/dep/DEP/obj/Debug/DEP.pdb
-/Users/freerkcuperus/GitProjects/DEP/DEP/obj/Debug/DEP.csprojResolveAssemblyReference.cache
+/Users/freerkcuperus/GitProjects/DEP/DEP/bin/Debug/DEP.exe.config
+/Users/freerkcuperus/GitProjects/DEP/DEP/bin/Debug/DEP.exe
+/Users/freerkcuperus/GitProjects/DEP/DEP/bin/Debug/DEP.pdb
 /Users/freerkcuperus/GitProjects/DEP/DEP/obj/Debug/DEP.Form1.resources
 /Users/freerkcuperus/GitProjects/DEP/DEP/obj/Debug/DEP.Properties.Resources.resources
 /Users/freerkcuperus/GitProjects/DEP/DEP/obj/Debug/DEP.csproj.GenerateResource.Cache
 /Users/freerkcuperus/GitProjects/DEP/DEP/obj/Debug/DEP.csproj.CoreCompileInputs.cache
 /Users/freerkcuperus/GitProjects/DEP/DEP/obj/Debug/DEP.exe
 /Users/freerkcuperus/GitProjects/DEP/DEP/obj/Debug/DEP.pdb
-/Users/freerkcuperus/GitProjects/DEP/DEP/bin/Debug/DEP.exe.config
-/Users/freerkcuperus/GitProjects/DEP/DEP/bin/Debug/DEP.exe
-/Users/freerkcuperus/GitProjects/DEP/DEP/bin/Debug/DEP.pdb

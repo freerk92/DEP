@@ -75,6 +75,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Figure.cs" />
+    <Compile Include="FileManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
