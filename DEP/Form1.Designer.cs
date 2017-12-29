@@ -33,6 +33,7 @@
             this.Select = new System.Windows.Forms.RadioButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.Move = new System.Windows.Forms.RadioButton();
+            this.Resize = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // Circle
@@ -75,6 +76,7 @@
             this.menuStrip1.Size = new System.Drawing.Size(536, 24);
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // Move
             // 
@@ -87,11 +89,23 @@
             this.Move.Text = "Move";
             this.Move.UseVisualStyleBackColor = true;
             // 
+            // Resize
+            // 
+            this.Resize.AutoSize = true;
+            this.Resize.Location = new System.Drawing.Point(255, 3);
+            this.Resize.Name = "Resize";
+            this.Resize.Size = new System.Drawing.Size(57, 17);
+            this.Resize.TabIndex = 5;
+            this.Resize.TabStop = true;
+            this.Resize.Text = "Resize";
+            this.Resize.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 361);
+            this.Controls.Add(this.Resize);
             this.Controls.Add(this.Move);
             this.Controls.Add(this.Select);
             this.Controls.Add(this.Square);
@@ -116,6 +130,7 @@
         private System.Windows.Forms.RadioButton Select;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.RadioButton Move;
+        private System.Windows.Forms.RadioButton Resize;
     }
 }
 

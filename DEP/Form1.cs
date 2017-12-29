@@ -89,11 +89,26 @@ namespace DEP
             {
                 Move_Down(e);
             }
+            else if(Resize.Checked)
+            {
+                Resize_Down(e);
+            }
             else
             {
                 Figure_Down(e);
             }
         }
+
+        private void Resize_Down(MouseEventArgs e)
+        {
+            if (figure != null)
+            {
+                figure.end = e.Location;
+            }
+
+            this.Refresh();
+        }
+
 
         private void Move_Down(MouseEventArgs e)
         {
@@ -176,6 +191,11 @@ namespace DEP
             // constantly
             this.DetermineDirection(e);
             this.Invalidate();
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }
