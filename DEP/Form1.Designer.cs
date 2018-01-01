@@ -37,6 +37,7 @@
             this.Load = new System.Windows.Forms.Button();
             this.Redo = new System.Windows.Forms.Button();
             this.Undo = new System.Windows.Forms.Button();
+            this.Resize = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // Circle
@@ -132,11 +133,23 @@
             this.Undo.UseVisualStyleBackColor = true;
             this.Undo.Click += new System.EventHandler(this.Undo_Click);
             // 
+            // Resize
+            // 
+            this.Resize.AutoSize = true;
+            this.Resize.Location = new System.Drawing.Point(11, 96);
+            this.Resize.Name = "Resize";
+            this.Resize.Size = new System.Drawing.Size(57, 17);
+            this.Resize.TabIndex = 9;
+            this.Resize.TabStop = true;
+            this.Resize.Text = "Resize";
+            this.Resize.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(668, 387);
+            this.Controls.Add(this.Resize);
             this.Controls.Add(this.Undo);
             this.Controls.Add(this.Redo);
             this.Controls.Add(this.Load);
@@ -169,6 +182,7 @@
         private System.Windows.Forms.Button Load;
         private System.Windows.Forms.Button Redo;
         private System.Windows.Forms.Button Undo;
+        private System.Windows.Forms.RadioButton Resize;
     }
 }
 

@@ -17,9 +17,6 @@ namespace DEP
 
         Invoker inv = new Invoker();
         
-
-        List<Figure> Figures = new List<Figure>();
-
         Figure figure;
         // Whether Mouse is Down to draw ellipse
         bool mDrawing;
@@ -97,10 +94,23 @@ namespace DEP
             {
                 Move_Down(e);
             }
+            else if(Resize.Checked)
+            {
+                Resize_Down(e);
+            }
             else
             {
                 Figure_Down(e);
             }
+        }
+        private void Resize_Down(MouseEventArgs e)
+        {
+            if (figure != null)
+            {
+                figure.end = e.Location;
+            }
+
+            this.Refresh();
         }
 
         private void Move_Down(MouseEventArgs e)
@@ -115,7 +125,7 @@ namespace DEP
 
         private void Select_Down(MouseEventArgs e)
         {
-            figure = Figures.FirstOrDefault(figure =>
+            figure = SaveData.Instance.Figures.FirstOrDefault(figure =>
             {
                 if (Enumerable.Range(figure.start.X, figure.end.X).Contains(e.Location.X) || Enumerable.Range(figure.end.X, figure.start.X).Contains(e.Location.X))
                 {
@@ -194,7 +204,6 @@ namespace DEP
         private void Load_Click(object sender, EventArgs e)
         {
             inv.PressButtonOn(1);
-            Figures = SaveData.Instance.Figures;
             Refresh();
         }
 

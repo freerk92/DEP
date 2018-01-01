@@ -1,0 +1,12 @@
+
+DEP/bin/Debug/
+
+\.vs/DEP/v15/Server/sqlite3/
+
+*.Cache
+
+DEP/obj/Debug/
+
+\.vs/DEP/v15/sqlite3/
+
+\.vs/DEP/v15/\.suo
