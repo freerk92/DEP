@@ -10,3 +10,5 @@ DEP/obj/Debug/
 \.vs/DEP/v15/sqlite3/
 
 \.vs/DEP/v15/\.suo
+
+*.userprefs
