@@ -8,16 +8,26 @@ namespace DEP
 {
     class Receiver
     {
+        SaveData DataLink = SaveData.Instance;
+
         public void Undo()
         {
-            SaveData.Instance.UndoStack.Add(SaveData.Instance.Figures.Last());
-            SaveData.Instance.Figures.Remove(SaveData.Instance.Figures.Last());
+            if(DataLink.HistoryList.Count > 0)
+            {
+                DataLink.FutureList.Add(new List<Figure>(DataLink.Figures));
+                DataLink.Figures = new List<Figure>(DataLink.HistoryList.Last());
+                DataLink.HistoryList.Remove(DataLink.HistoryList.Last());
+            }
         }
 
         public void Redo()
         {
-            SaveData.Instance.Figures.Add(SaveData.Instance.UndoStack.Last());
-            SaveData.Instance.UndoStack.Remove(SaveData.Instance.UndoStack.Last());
+            if(DataLink.FutureList.Count > 0)
+            {
+                DataLink.HistoryList.Add(new List<Figure>(DataLink.Figures));
+                DataLink.Figures = new List<Figure>(DataLink.FutureList.Last());
+                DataLink.FutureList.Remove(DataLink.FutureList.Last());
+            }
         }
         
         public void Save()
