@@ -34,17 +34,31 @@ namespace DEP
             }
         }
 
-        private List<Figure> undoStack = new List<Figure>();
+        private List<List<Figure>> historyList = new List<List<Figure>>();
 
-        public List<Figure> UndoStack
+        public List<List<Figure>> HistoryList
         {
             get
             {
-                return undoStack;
+                return historyList;
             }
             set
             {
-                undoStack = value;
+                historyList = value;
+            }
+        }
+
+        private List<List<Figure>> futureList = new List<List<Figure>>();
+
+        public List<List<Figure>> FutureList
+        {
+            get
+            {
+                return futureList;
+            }
+            set
+            {
+                futureList = value;
             }
         }
     }

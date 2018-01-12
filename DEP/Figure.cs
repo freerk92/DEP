@@ -89,17 +89,17 @@ namespace DEP
                     case Direction.Two:
                         e.Graphics.DrawRectangle(color, new Rectangle(this.end,
                             new Size(this.start.X - this.end.X,
-                                this.start.Y - this.end.Y)));
+                               this.start.Y - this.end.Y)));
                         break;
                     case Direction.Three:
                         e.Graphics.DrawRectangle(color, new Rectangle(new Point(this.end.X,
-                            this.start.Y), new Size(this.start.X - this.end.X,
-                            this.end.Y - this.start.Y)));
+                           this.start.Y), new Size(this.start.X - this.end.X,
+                           this.end.Y - this.start.Y)));
                         break;
                     case Direction.Four:
                         e.Graphics.DrawRectangle(color, new Rectangle(this.start,
                             new Size(this.end.X - this.start.X,
-                                this.end.Y - this.start.Y)));
+                               this.end.Y - this.start.Y)));
                         break;
                     default:
                         MessageBox.Show("Error");

@@ -23,6 +23,7 @@ namespace DEP
 
         public Form1()
         {
+            SaveData.Instance.HistoryList.Add(new List<Figure>());
             inv.InsertCommands(save);
             inv.InsertCommands(load);
             inv.InsertCommands(undo);
@@ -109,7 +110,8 @@ namespace DEP
             {
                 figure.end = e.Location;
             }
-
+            SaveData.Instance.Figures.Add(figure);
+            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
             this.Refresh();
         }
 
@@ -119,7 +121,8 @@ namespace DEP
             {
                 figure.Move(e.Location);
             }
-
+            SaveData.Instance.Figures.Add(figure);
+            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
             this.Refresh();
         }
 
@@ -177,6 +180,8 @@ namespace DEP
             this.DetermineDirection(e);
             // Add the newly created ellipse into ellipse list
             SaveData.Instance.Figures.Add(figure);
+            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+            SaveData.Instance.FutureList.Clear();
             this.Invalidate();
         }
 
@@ -220,11 +225,9 @@ namespace DEP
 
         private void Redo_Click(object sender, EventArgs e)
         {
-            if (SaveData.Instance.UndoStack.Count > 0)
-            {
-                inv.PressButtonOn(3);
-                Refresh();
-            }
+            inv.PressButtonOn(3);
+            Refresh();
+            
         }
     }
 }
