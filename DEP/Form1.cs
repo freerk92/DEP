@@ -32,15 +32,10 @@ namespace DEP
         }
         
         // Determine the direction of ellipse by start and end points
-
         private void DetermineDirection(MouseEventArgs e)
-
         {
-
             if (e.Y < 0 && e.X < 0)
-
             {
-
                 figure.end.X = 0;
                 figure.end.Y = 0;
             }
@@ -144,6 +139,11 @@ namespace DEP
             {
                 Circle.Checked = true;
             }
+            else
+            {
+                figure.IsSelected = true;
+            }
+            Refresh();
         }
 
 
@@ -189,7 +189,6 @@ namespace DEP
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
             Figure_Move(e);
-
         }
 
         private void Figure_Move(MouseEventArgs e)
@@ -212,8 +211,6 @@ namespace DEP
             Refresh();
         }
 
-        Stack<Figure> UndoStack = new Stack<Figure>();
-
         private void Undo_Click(object sender, EventArgs e)
         {
             if(SaveData.Instance.Figures.Count > 0)
@@ -227,7 +224,6 @@ namespace DEP
         {
             inv.PressButtonOn(3);
             Refresh();
-            
         }
     }
 }

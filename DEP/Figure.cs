@@ -12,8 +12,7 @@ namespace DEP
         public Point end;
         // Direction comparing the end point and the start point
         public Direction direction;
-        // Color
-        public Pen color;
+        public bool IsSelected { get; set; }
         public abstract void Draw(PaintEventArgs e);
 
         public void Move(Point location)
@@ -37,11 +36,11 @@ namespace DEP
 
         public class Ellipse : Figure
         {
-            
+            public bool IsSelected { get; set; }
             // Drawthis by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
-                color = color ?? Pens.Black;
+                Pen color = IsSelected ? Pens.Red : Pens.Black;
 
                 switch (this.direction)
                 {
@@ -74,11 +73,11 @@ namespace DEP
 
         public class xRectangle : Figure
         {
-            // Drawthis by its start, end points and direction
+            // Draw this by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
-                color = new Pen(Brushes.Black);
-                color.Width = 3.0F;
+                Pen color = IsSelected ? Pens.Red : Pens.Black;
+
                 switch (this.direction)
                 {
                     case Direction.One:
