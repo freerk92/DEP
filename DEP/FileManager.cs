@@ -55,6 +55,7 @@ namespace DEP
                 }
             }
             SaveData.Instance.Figures = test;
+            SaveData.Instance.HistoryList.Add(new List<Figure>(test));
         }
 
         private List<Figure> DecryptIO(string x)
@@ -91,6 +92,7 @@ namespace DEP
                 }
                 figure.start = new Point(startX, startY);
                 figure.end = new Point(startX + width, startY + height);
+                figure.direction = DetermineDirection(figure);
                 returnList.Add(figure);
             }
 
@@ -99,7 +101,19 @@ namespace DEP
             return returnList;
         }
 
+        private Direction DetermineDirection(Figure figure)
+        {
+            if (figure.end.X > figure.start.X && figure.end.Y <= figure.start.Y)
+                return Direction.One;
+            else if (figure.end.X <= figure.start.X && figure.end.Y < figure.start.Y)
+                return Direction.Two;
+            else if (figure.end.X < figure.start.X && figure.end.Y >= figure.start.Y)
+                return Direction.Three;
+            else if (figure.end.X >= figure.start.X && figure.end.Y > figure.start.Y)
+                return Direction.Four;
 
+            return Direction.One;
+        }
 
 
         private string ConvertListToIO(List<Figure> figures)
