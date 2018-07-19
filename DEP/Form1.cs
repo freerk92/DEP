@@ -143,6 +143,14 @@ namespace DEP
             {
                 figure.IsSelected = true;
             }
+
+            foreach (var item in SaveData.Instance.Figures)
+            {
+                if(item != figure)
+                {
+                    item.IsSelected = false;
+                }
+            }
             Refresh();
         }
 
@@ -185,7 +193,6 @@ namespace DEP
             this.Invalidate();
         }
 
-
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
             Figure_Move(e);
@@ -225,5 +232,7 @@ namespace DEP
             inv.PressButtonOn(3);
             Refresh();
         }
+
+        
     }
 }

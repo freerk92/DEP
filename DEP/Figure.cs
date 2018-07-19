@@ -36,7 +36,6 @@ namespace DEP
 
         public class Ellipse : Figure
         {
-            public bool IsSelected { get; set; }
             // Drawthis by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
