@@ -105,8 +105,8 @@ namespace DEP
             {
                 figure.end = e.Location;
             }
-            SaveData.Instance.Figures.Add(figure);
             SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+            SaveData.Instance.Figures.Add(figure);
             this.Refresh();
         }
 
@@ -116,8 +116,8 @@ namespace DEP
             {
                 figure.Move(e.Location);
             }
-            SaveData.Instance.Figures.Add(figure);
             SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+            SaveData.Instance.Figures.Add(figure);
             this.Refresh();
         }
 
