@@ -54,6 +54,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Group.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="Invoker.cs" />
     <Compile Include="Program.cs" />

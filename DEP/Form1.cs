@@ -16,7 +16,9 @@ namespace DEP
         RedoCommand redo = new RedoCommand(receiver);
 
         Invoker inv = new Invoker();
-        
+
+        public List<Group> Groups = new List<Group>();
+
         Figure figure;
         // Whether Mouse is Down to draw ellipse
         bool mDrawing;
@@ -62,10 +64,10 @@ namespace DEP
                 figure.direction = Direction.Four;
 
         }
-
+        
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            this.Refresh();
+            Refresh();
             if (mDrawing)
             {
                 figure.Draw(e);
@@ -233,6 +235,72 @@ namespace DEP
             Refresh();
         }
 
-        
+        private void AddToGroupButton_Click(object sender, EventArgs e)
+        {
+            int index = (int)numericUpDown1.Value;
+            int? existingIndex = null;
+            for (int i = 0; i < Groups.Count; i++)
+            {
+                if (Groups[i].ID == index)
+                {
+                    existingIndex = i;
+                }
+            }
+
+            if (existingIndex.HasValue)
+            {
+                Groups[existingIndex.Value].AddToGroup(figure);
+            }
+            else
+            {
+                Groups.Add(new Group(index));
+                Groups.Last().Figures.Add(figure);
+            }
+
+            var list = SaveData.Instance.Figures;
+            for (int i = 0; i < list.Count; i++)
+            {
+                if(list[i].Equals(figure))
+                {
+                    list[i].group = Groups.Last();
+                }
+            }
+        }
+
+        private void ShowGroup_Click(object sender, EventArgs e)
+        {
+            int index = (int)numericUpDown1.Value;
+            int? existingIndex = null;
+            for (int i = 0; i < Groups.Count; i++)
+            {
+                if (Groups[i].ID == index)
+                {
+                    existingIndex = i;
+                }
+            }
+
+            if(existingIndex.HasValue)
+            {
+                var list = SaveData.Instance.Figures;
+                foreach (var item in list)
+                {
+                    if(item.group != null && item.group.ID == existingIndex)
+                    {
+                        item.IsSelected = true;
+                    }
+                    else
+                    {
+                        item.IsSelected = false;
+                    }
+                }
+            }
+            this.Refresh();
+        }
+    }
+
+    public class ComboItem
+    {
+        public int ID { get; set; }
+        public string Text { get; set; }
     }
 }

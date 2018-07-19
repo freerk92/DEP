@@ -14,6 +14,7 @@ namespace DEP
         public Direction direction;
         public bool IsSelected { get; set; }
         public abstract void Draw(PaintEventArgs e);
+        public Group group{get;set;}
 
         public void Move(Point location)
         {

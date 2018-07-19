@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 
 namespace DEP
 {
-    class Group
+    public class Group
     {
-        List<Figure> Figures = new List<Figure>();
-        List<Group> Groups = new List<Group>();
+        public int ID;
+        public List<Figure> Figures = new List<Figure>();
+        public List<Group> Groups = new List<Group>();
+
+        public Group(int index)
+        {
+            ID = index;
+        }
 
         public void AddToGroup(Figure figure)
         {
