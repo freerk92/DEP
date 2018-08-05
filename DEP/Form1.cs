@@ -79,6 +79,8 @@ namespace DEP
             }
         }
 
+        //Method called when mouse is pressed
+        //Based on the checked radiobutton the correct method is called
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             if (Select.Checked)
@@ -99,6 +101,7 @@ namespace DEP
             }
         }
 
+        //the end coordinates of the figure are changed to new pressed coordinates
         private void Resize_Down(MouseEventArgs e)
         {
             if (figure != null)
@@ -109,7 +112,7 @@ namespace DEP
             this.Refresh();
         }
 
-
+        //If a figure is selected it is moved to the new coordinates
         private void Move_Down(MouseEventArgs e)
         {
             if (figure != null)
@@ -120,6 +123,7 @@ namespace DEP
             this.Refresh();
         }
 
+        //The list of figures is looped through until a figure is found which is close to the selected coordinates
         private void Select_Down(MouseEventArgs e)
         {
             figure = Figures.FirstOrDefault(figure =>
@@ -140,7 +144,7 @@ namespace DEP
             }
         }
 
-
+        //Set figure to the item which is currently being drawn
         private void Figure_Down(MouseEventArgs e)
         {
             if (Circle.Checked)
@@ -162,11 +166,13 @@ namespace DEP
             }
         }
 
+        //Call method to draw
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
             Figure_Up(e);
         }
 
+        //Add figure to the List of images
         private void Figure_Up(MouseEventArgs e)
         {
             if (!mDrawing) return;
@@ -177,13 +183,13 @@ namespace DEP
             this.Invalidate();
         }
 
-
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
             Figure_Move(e);
 
         }
 
+        //Method used while drawing items to coninuously draw the figure while the mouse is moving
         private void Figure_Move(MouseEventArgs e)
         {
             if (!mDrawing) return;
@@ -191,11 +197,6 @@ namespace DEP
             // constantly
             this.DetermineDirection(e);
             this.Invalidate();
-        }
-
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
         }
     }
 }
