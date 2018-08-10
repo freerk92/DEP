@@ -13,8 +13,18 @@ namespace DEP
         // Direction comparing the end point and the start point
         public Direction direction;
         public bool IsSelected { get; set; }
+        public bool IsMainGroupFigure { get; set; }
         public abstract void Draw(PaintEventArgs e);
-        public Group group{get;set;}
+        public Group group{get;set; }
+        Pen color
+        {
+            get
+            {
+                if (IsMainGroupFigure && IsSelected)
+                    return Pens.Blue;
+                return IsSelected ? Pens.Red : Pens.Black;
+            }
+        }
 
         public void Move(Point location)
         {
@@ -40,8 +50,7 @@ namespace DEP
             // Drawthis by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
-                Pen color = IsSelected ? Pens.Red : Pens.Black;
-
+                
                 switch (this.direction)
                 {
                     case Direction.One:
@@ -76,8 +85,6 @@ namespace DEP
             // Draw this by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
-                Pen color = IsSelected ? Pens.Red : Pens.Black;
-
                 switch (this.direction)
                 {
                     case Direction.One:

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using static DEP.Figure;
 using DEP.Commands;
+using System.Drawing;
 
 namespace DEP
 {
@@ -20,9 +21,11 @@ namespace DEP
         public List<Group> Groups = new List<Group>();
 
         Figure figure;
+        Group SelectedGroup;
+        Figure SelectedFigure;
         // Whether Mouse is Down to draw ellipse
         bool mDrawing;
-
+        bool figureSelected= true;
         public Form1()
         {
             SaveData.Instance.HistoryList.Add(new List<Figure>());
@@ -103,9 +106,18 @@ namespace DEP
         }
         private void Resize_Down(MouseEventArgs e)
         {
-            if (figure != null)
+            if (figureSelected && SelectedFigure != null)
             {
-                figure.end = e.Location;
+                var currentFigures = SaveData.Instance.Figures;
+                foreach (var item in currentFigures)
+                {
+                    if (item == SelectedFigure)
+                    {
+                        item.end = e.Location;
+                    }
+                }
+                SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+                SaveData.Instance.Figures = new List<Figure>(currentFigures);
             }
             SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
             SaveData.Instance.Figures.Add(figure);
@@ -114,18 +126,49 @@ namespace DEP
 
         private void Move_Down(MouseEventArgs e)
         {
-            if (figure != null)
+            if (figureSelected && SelectedFigure != null)
             {
-                figure.Move(e.Location);
+                var currentFigures = SaveData.Instance.Figures;
+                foreach (var item in currentFigures)
+                {
+                    if(item == SelectedFigure)
+                    {
+                        item.Move(e.Location);
+                    }
+                }
+                SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+                SaveData.Instance.Figures = new List<Figure>(currentFigures);
             }
-            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-            SaveData.Instance.Figures.Add(figure);
+            else if(!figureSelected && SelectedGroup != null)
+            {
+
+                var testFigures = SaveData.Instance.Figures;
+                var currentFigures = SaveData.Instance.Figures;
+                var StartPoint = SelectedGroup.Figures[0].start;
+                var EndPoint = e.Location;
+                var XDifference = StartPoint.X - EndPoint.X;
+                var YDifference = StartPoint.Y - EndPoint.Y;
+
+                foreach (var item in SelectedGroup.Figures)
+                {
+                    foreach (var figure in currentFigures)
+                    {
+                        if (figure == item)
+                        {
+                            figure.start = new Point(figure.start.X - XDifference, figure.start.Y - YDifference);
+                            figure.end = new Point(figure.end.X - XDifference, figure.end.Y - YDifference);
+                        }
+                    }
+                }
+                SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+                SaveData.Instance.Figures = new List<Figure>(currentFigures);
+            }
             this.Refresh();
         }
 
         private void Select_Down(MouseEventArgs e)
         {
-            figure = SaveData.Instance.Figures.FirstOrDefault(figure =>
+            SelectedFigure = SaveData.Instance.Figures.FirstOrDefault(figure =>
             {
                 if (Enumerable.Range(figure.start.X, figure.end.X).Contains(e.Location.X) || Enumerable.Range(figure.end.X, figure.start.X).Contains(e.Location.X))
                 {
@@ -137,25 +180,20 @@ namespace DEP
                 return false;
             });
 
-            if (figure == null)
+            if (SelectedFigure != null)
             {
-                Circle.Checked = true;
-            }
-            else
-            {
-                figure.IsSelected = true;
+                SelectedFigure.IsSelected = true;
             }
 
             foreach (var item in SaveData.Instance.Figures)
             {
-                if(item != figure)
+                if(item != SelectedFigure)
                 {
                     item.IsSelected = false;
                 }
             }
             Refresh();
         }
-
 
         private void Figure_Down(MouseEventArgs e)
         {
@@ -249,25 +287,26 @@ namespace DEP
 
             if (existingIndex.HasValue)
             {
-                Groups[existingIndex.Value].AddToGroup(figure);
+                if(!Groups[existingIndex.Value].Figures.Contains(SelectedFigure))
+                    Groups[existingIndex.Value].AddToGroup(SelectedFigure);
             }
             else
             {
                 Groups.Add(new Group(index));
-                Groups.Last().Figures.Add(figure);
+                Groups.Last().Figures.Add(SelectedFigure);
             }
 
             var list = SaveData.Instance.Figures;
             for (int i = 0; i < list.Count; i++)
             {
-                if(list[i].Equals(figure))
+                if(list[i].Equals(SelectedFigure))
                 {
                     list[i].group = Groups.Last();
                 }
             }
         }
 
-        private void ShowGroup_Click(object sender, EventArgs e)
+        private void SelectGroup_Click(object sender, EventArgs e)
         {
             int index = (int)numericUpDown1.Value;
             int? existingIndex = null;
@@ -281,26 +320,64 @@ namespace DEP
 
             if(existingIndex.HasValue)
             {
-                var list = SaveData.Instance.Figures;
-                foreach (var item in list)
-                {
-                    if(item.group != null && item.group.ID == existingIndex)
-                    {
-                        item.IsSelected = true;
-                    }
-                    else
-                    {
-                        item.IsSelected = false;
-                    }
-                }
+                SelectedGroup = Groups[existingIndex.Value];
+                Color_Group(SelectedGroup);
             }
             this.Refresh();
         }
-    }
 
-    public class ComboItem
-    {
-        public int ID { get; set; }
-        public string Text { get; set; }
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            if(checkBox.Checked)
+            {
+                checkBox.Text = "Group";
+                figureSelected = false;
+                if (SelectedGroup != null)
+                    Color_Group(SelectedGroup);
+            }
+            else
+            {
+                checkBox.Text = "Figure";
+                figureSelected = true;
+                var currentFigures = SaveData.Instance.Figures;
+                Color_Figures(currentFigures);           
+            }
+            Refresh();
+        }
+
+        private void Color_Group(Group group)
+        {
+            var FirstItem = SelectedGroup.Figures[0];
+            var list = SaveData.Instance.Figures;
+            foreach (var item in list)
+            {
+                if (FirstItem == item)
+                    item.IsMainGroupFigure = true;
+                if (item.group != null)
+                {
+                    item.IsSelected = true;
+                }
+                else
+                {
+                    item.IsSelected = false;
+                }
+            }
+        }
+
+        public void Color_Figures(List<Figure> FiguresList)
+        {
+            foreach (var item in FiguresList)
+            {
+                if (item == SelectedFigure)
+                {
+                    item.IsSelected = true;
+                }
+                else
+                {
+                    item.IsSelected = false;
+                }
+            }
+        }
     }
 }
