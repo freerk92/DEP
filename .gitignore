@@ -12,3 +12,7 @@ DEP/obj/Debug/
 \.vs/DEP/v15/\.suo
 
 *.userprefs
+
+\.mfractor/
+
+\.vs/DEP/xs/

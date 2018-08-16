@@ -137,5 +137,40 @@ namespace DEP
             }
             return saveData;
         }
+
+
+        private string GroupIO(List<Group> Groups)
+        {
+            string saveGroupData = "";
+            for (int i = 0; i < Groups.Count; i++)
+            {
+                var ExistsAsComposite = false;
+                if (Groups[i].Groups.Count > 0)
+                {
+                    for (int j = 0; j < Groups.Count; j++)
+                    {
+                        ExistsAsComposite = GroupContainsCompositeOf(Groups[j], Groups[i].ID);
+
+                    }
+                }
+                if (ExistsAsComposite)
+                    Groups.Remove(Groups[i]);
+            }
+            return saveGroupData;
+        }
+
+        private bool GroupContainsCompositeOf(Group group, int groupID)
+        {
+            var answer = false;
+
+            foreach (var item in group.Groups)
+            {
+                if (item.ID == groupID)
+                    return true;
+            }
+
+            return answer;
+        }
+
     }
 }

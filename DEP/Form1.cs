@@ -119,9 +119,38 @@ namespace DEP
                 SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
                 SaveData.Instance.Figures = new List<Figure>(currentFigures);
             }
-            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-            SaveData.Instance.Figures.Add(figure);
+            else if(!figureSelected && SelectedGroup != null)
+            {
+                var currentFigures = SaveData.Instance.Figures;
+                var mainFigure = SelectedGroup.Figures.First();
+                var width = mainFigure.end.X-mainFigure.start.X;
+                var height = mainFigure.end.Y - mainFigure.start.Y;
+                var EndPoint = mainFigure.end;
+                var StartPoint = mainFigure.start;
+
+                var XDifference = ((float)EndPoint.X - (float)e.X)/width;
+                var YDifference = ((float)EndPoint.Y - (float)e.Y)/height;
+
+                foreach (var item in SelectedGroup.Figures)
+                {
+                    var index = currentFigures.IndexOf(item);
+                    currentFigures[index] = resizeFigure(item, XDifference, YDifference);
+                }
+
+                SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+                SaveData.Instance.Figures = new List<Figure>(currentFigures);
+            }
+
+
             this.Refresh();
+        }
+
+        private Figure resizeFigure(Figure item, float xDifference, float yDifference)
+        {
+            var ItemSizeX = (item.end.X - item.start.X)*xDifference;
+            var ItemSizeY = (item.end.Y - item.start.Y) * yDifference;
+            item.end = new Point((int)(item.start.X + ItemSizeX), (int)(item.start.Y + ItemSizeY));
+            return item;
         }
 
         private void Move_Down(MouseEventArgs e)
@@ -141,8 +170,6 @@ namespace DEP
             }
             else if(!figureSelected && SelectedGroup != null)
             {
-
-                var testFigures = SaveData.Instance.Figures;
                 var currentFigures = SaveData.Instance.Figures;
                 var StartPoint = SelectedGroup.Figures[0].start;
                 var EndPoint = e.Location;
