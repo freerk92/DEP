@@ -107,9 +107,9 @@ namespace DEP
 
         private void Resize_Down(MouseEventArgs e)
         {
+            var currentFigures = SaveData.Instance.Figures;
             if (figureSelected && SelectedFigure != null)
             {
-                var currentFigures = SaveData.Instance.Figures;
                 foreach (var item in currentFigures)
                 {
                     if (item == SelectedFigure)
@@ -117,39 +117,43 @@ namespace DEP
                         item.end = e.Location;
                     }
                 }
-                SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-                SaveData.Instance.Figures = new List<Figure>(currentFigures);
             }
             else if(!figureSelected && SelectedGroup != null)
             {
-                var currentFigures = SaveData.Instance.Figures;
                 var mainFigure = SelectedGroup.Figures.First();
                 var width = mainFigure.end.X-mainFigure.start.X;
                 var height = mainFigure.end.Y - mainFigure.start.Y;
                 var EndPoint = mainFigure.end;
                 var StartPoint = mainFigure.start;
 
-                var XDifference = ((float)EndPoint.X - (float)e.X)/width;
-                var YDifference = ((float)EndPoint.Y - (float)e.Y)/height;
+                var XDifference = 1.0 - ((double)EndPoint.X - (double)e.X)/width;
+                var YDifference = 1.0 - ((double)EndPoint.Y - (double)e.Y)/height;
+                
+
 
                 foreach (var item in SelectedGroup.Figures)
                 {
                     var index = currentFigures.IndexOf(item);
                     currentFigures[index] = resizeFigure(item, XDifference, YDifference);
-                }
-
-                SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-                SaveData.Instance.Figures = new List<Figure>(currentFigures);
+                }               
             }
 
-
+            StoreChange(currentFigures);
             this.Refresh();
         }
 
-        private Figure resizeFigure(Figure item, float xDifference, float yDifference)
+        public void StoreChange(List<Figure> currentFigures)
         {
-            var ItemSizeX = (item.end.X - item.start.X)*xDifference;
-            var ItemSizeY = (item.end.Y - item.start.Y) * yDifference;
+            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+            SaveData.Instance.Figures = new List<Figure>(currentFigures);
+        }
+
+        private Figure resizeFigure(Figure item, double xDifference, double yDifference)
+        {
+            var width = item.end.X - item.start.X;
+            var height = (item.end.Y - item.start.Y);
+            var ItemSizeX = Math.Abs(width*xDifference);
+            var ItemSizeY = Math.Abs(height * yDifference);
             int newX = Math.Abs((int)(item.start.X + ItemSizeX));
             int newY = Math.Abs((int)(item.start.Y + ItemSizeY));
             item.end = new Point(newX, newY);
@@ -168,8 +172,7 @@ namespace DEP
                         item.Move(e.Location);
                     }
                 }
-                SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-                SaveData.Instance.Figures = new List<Figure>(currentFigures);
+                StoreChange(currentFigures);
             }
             else if(!figureSelected && SelectedGroup != null)
             {
@@ -190,8 +193,7 @@ namespace DEP
                         }
                     }
                 }
-                SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-                SaveData.Instance.Figures = new List<Figure>(currentFigures);
+                StoreChange(currentFigures);
             }
             this.Refresh();
         }
