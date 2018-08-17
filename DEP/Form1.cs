@@ -104,6 +104,7 @@ namespace DEP
                 Figure_Down(e);
             }
         }
+
         private void Resize_Down(MouseEventArgs e)
         {
             if (figureSelected && SelectedFigure != null)
@@ -149,7 +150,9 @@ namespace DEP
         {
             var ItemSizeX = (item.end.X - item.start.X)*xDifference;
             var ItemSizeY = (item.end.Y - item.start.Y) * yDifference;
-            item.end = new Point((int)(item.start.X + ItemSizeX), (int)(item.start.Y + ItemSizeY));
+            int newX = Math.Abs((int)(item.start.X + ItemSizeX));
+            int newY = Math.Abs((int)(item.start.Y + ItemSizeY));
+            item.end = new Point(newX, newY);
             return item;
         }
 
