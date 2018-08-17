@@ -134,12 +134,61 @@ namespace DEP
                 foreach (var item in SelectedGroup.Figures)
                 {
                     var index = currentFigures.IndexOf(item);
-                    currentFigures[index] = resizeFigure(item, XDifference, YDifference);
+                    var resizedItem = resizeFigure(item, XDifference, YDifference);
+                    if (!item.IsMainGroupFigure)
+                        resizedItem = AddOffsetToResize(resizedItem, XDifference, YDifference);
+                    currentFigures[index] = resizedItem;
                 }               
             }
 
             StoreChange(currentFigures);
             this.Refresh();
+        }
+
+        private Figure AddOffsetToResize(Figure item, double xDifference, double yDifference)
+        {
+            var mainItem = SelectedGroup.Figures.First();
+            var offsetX = item.start.X - mainItem.start.X;
+            var offSetY = item.start.Y - mainItem.start.Y;
+            var newOffsetX = offsetX * Math.Abs(xDifference);
+            var newOffsetY = offsetX * Math.Abs(yDifference);
+
+            int newStartX;
+            int newEndX;
+            int newStartY;
+            int newEndY;
+
+            var compareX = (int)(xDifference * 100);
+            var compareY = (int)(yDifference * 100); 
+            if (compareX < 100)
+            {
+                newStartX = (int)(item.start.X - newOffsetX);
+                newEndX = (int)(item.end.X - newOffsetX);
+            }
+            else
+            {
+                newStartX = (int)(item.start.X + newOffsetX);
+                newEndX = (int)(item.end.X + newOffsetX);
+            }
+
+            if (compareY < 100)
+            {
+                newStartY = (int)(item.start.Y - newOffsetY);
+                newEndY = (int)(item.end.Y - newOffsetY);
+            }
+            else
+            {
+                newStartY = (int)(item.start.Y + newOffsetY);
+                newEndY = (int)(item.end.Y + newOffsetY);
+            }
+
+            var offsetStart = new Point(newStartX, newStartY);
+            var offsetEnd = new Point(newEndX, newEndY);
+
+            item.start = offsetStart;
+            item.end = offsetEnd;
+
+            return item;
         }
 
         public void StoreChange(List<Figure> currentFigures)
