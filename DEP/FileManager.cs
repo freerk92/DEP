@@ -65,7 +65,6 @@ namespace DEP
                 StringSplitOptions.None
             );
 
-
             var returnList = new List<Figure>();
 
             foreach (var item in tempList)

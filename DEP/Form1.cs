@@ -26,6 +26,7 @@ namespace DEP
         // Whether Mouse is Down to draw ellipse
         bool mDrawing;
         bool figureSelected= true;
+
         public Form1()
         {
             SaveData.Instance.HistoryList.Add(new List<Figure>());
@@ -366,29 +367,57 @@ namespace DEP
                 }
             }
 
-            if (existingIndex.HasValue)
+            if(figureSelected && figure != null)
             {
-                if(!Groups[existingIndex.Value].Figures.Contains(SelectedFigure))
-                    Groups[existingIndex.Value].AddToGroup(SelectedFigure);
-            }
-            else
-            {
-                Groups.Add(new Group(index));
-                Groups.Last().Figures.Add(SelectedFigure);
-            }
-
-            var list = SaveData.Instance.Figures;
-            for (int i = 0; i < list.Count; i++)
-            {
-                if(list[i].Equals(SelectedFigure))
+                if (existingIndex.HasValue)
                 {
-                    list[i].group = Groups.Last();
+                    if (!Groups[existingIndex.Value].Figures.Contains(SelectedFigure))
+                        Groups[existingIndex.Value].AddToGroup(SelectedFigure);
+                }
+                else
+                {
+                    Groups.Add(new Group(index));
+                    Groups.Last().Figures.Add(SelectedFigure);
+                }
+
+                var list = SaveData.Instance.Figures;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i].Equals(SelectedFigure))
+                    {
+                        list[i].group = GetGroupWithID(index);
+                    }
                 }
             }
+            else if(!figureSelected && SelectedGroup != null)
+            {
+                if (SelectedGroup.IsInGroup == null)
+                {
+                    Groups[existingIndex.Value].AddToGroup(SelectedGroup);
+                    SelectedGroup.IsInGroup = existingIndex;
+                }
+
+
+            }
+
+
+        }
+
+        private Group GetGroupWithID(int index)
+        {
+            Group group = null;
+            foreach (var item in Groups)
+            {
+                if (item.ID == index)
+                    group = item;
+            }
+
+            return group;
         }
 
         private void SelectGroup_Click(object sender, EventArgs e)
         {
+            
             int index = (int)numericUpDown1.Value;
             int? existingIndex = null;
             for (int i = 0; i < Groups.Count; i++)
@@ -405,6 +434,15 @@ namespace DEP
                 Color_Group(SelectedGroup);
             }
             this.Refresh();
+        }
+
+        private void ResetColors()
+        {
+            foreach (var item in SaveData.Instance.Figures)
+            {
+                item.IsSelected = false;
+                item.IsMainGroupFigure = false;
+            }
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -433,11 +471,13 @@ namespace DEP
             var list = SaveData.Instance.Figures;
             foreach (var item in list)
             {
-                if (FirstItem == item)
-                    item.IsMainGroupFigure = true;
-                if (item.group != null)
+                if (item.group != null && item.group == group)
                 {
+                    if (FirstItem == item)
+                        item.IsMainGroupFigure = true;
+                    
                     item.IsSelected = true;
+
                 }
                 else
                 {

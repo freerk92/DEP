@@ -11,6 +11,8 @@ namespace DEP
         public int ID;
         public List<Figure> Figures = new List<Figure>();
         public List<Group> Groups = new List<Group>();
+        public int? IsInGroup { get; set; }
+
 
         public Group(int index)
         {
