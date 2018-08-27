@@ -61,5 +61,20 @@ namespace DEP
                 futureList = value;
             }
         }
+
+
+        private List<Group> groups = new List<Group>();
+
+        public List<Group> Groups
+        {
+            get
+            {
+                return groups;
+            }
+            set
+            {
+                groups = value;
+            }
+        }
     }
 }

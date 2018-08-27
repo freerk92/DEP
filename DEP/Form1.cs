@@ -18,7 +18,10 @@ namespace DEP
 
         Invoker inv = new Invoker();
 
-        public List<Group> Groups = new List<Group>();
+        public List<Group> Groups {
+            get => SaveData.Instance.Groups;
+            set => SaveData.Instance.Groups = value;
+        }
 
         Figure figure;
         Group SelectedGroup;
@@ -342,17 +345,23 @@ namespace DEP
 
         private void Undo_Click(object sender, EventArgs e)
         {
+            var v = (Button)sender;
+            v.Click -= Undo_Click;
             if(SaveData.Instance.Figures.Count > 0)
             {
                 inv.PressButtonOn(2);
                 Refresh();
             }
+            Undo.Click += Undo_Click;
         }
 
         private void Redo_Click(object sender, EventArgs e)
         {
+            Redo.Click -= Redo_Click;
+            if(SaveData.Instance.FutureList.Count > 0)
             inv.PressButtonOn(3);
             Refresh();
+            Redo.Click += Redo_Click;
         }
 
         private void AddToGroupButton_Click(object sender, EventArgs e)
@@ -396,8 +405,6 @@ namespace DEP
                     Groups[existingIndex.Value].AddToGroup(SelectedGroup);
                     SelectedGroup.IsInGroup = existingIndex;
                 }
-
-
             }
 
 
@@ -469,21 +476,41 @@ namespace DEP
         {
             var FirstItem = SelectedGroup.Figures[0];
             var list = SaveData.Instance.Figures;
+            var GroupIDsList = FindUnderlyingGroupIDS(group);
+
+
             foreach (var item in list)
             {
+                item.IsUnderlyingGroup = false;
+                item.IsSelected = false;
+                item.IsMainGroupFigure = false;
+
                 if (item.group != null && item.group == group)
                 {
                     if (FirstItem == item)
                         item.IsMainGroupFigure = true;
-                    
                     item.IsSelected = true;
 
                 }
-                else
+
+              if(item.group != null && GroupIDsList.Contains(item.group.ID))
                 {
-                    item.IsSelected = false;
+                    item.IsUnderlyingGroup = true;
                 }
             }
+
+        }
+
+        public List<int> FindUnderlyingGroupIDS(Group group)
+        {
+            var list = new List<int>();
+
+            foreach (var item in group.Groups)
+            {
+                list.Add(item.ID);
+                list.AddRange(FindUnderlyingGroupIDS(item));
+            }
+            return list;
         }
 
         public void Color_Figures(List<Figure> FiguresList)

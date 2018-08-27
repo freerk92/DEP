@@ -25,8 +25,8 @@ namespace DEP
             if(DataLink.FutureList.Count > 0)
             {
                 DataLink.HistoryList.Add(new List<Figure>(DataLink.Figures));
-                DataLink.FutureList.Remove(DataLink.FutureList.Last());
                 DataLink.Figures = new List<Figure>(DataLink.FutureList.Last());
+                DataLink.FutureList.Remove(DataLink.FutureList.Last());
             }
         }
         

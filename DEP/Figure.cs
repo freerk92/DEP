@@ -14,12 +14,15 @@ namespace DEP
         public Direction direction;
         public bool IsSelected { get; set; }
         public bool IsMainGroupFigure { get; set; }
+        public bool IsUnderlyingGroup { get; set; }
         public abstract void Draw(PaintEventArgs e);
         public Group group{get;set; }
         Pen color
         {
             get
             {
+                if (IsUnderlyingGroup)
+                    return Pens.Orange;
                 if (IsMainGroupFigure && IsSelected)
                     return Pens.Blue;
                 return IsSelected ? Pens.Red : Pens.Black;

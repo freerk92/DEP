@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using static DEP.Figure;
 
@@ -48,9 +49,9 @@ namespace DEP
                 {
                     using(StreamReader stream = new StreamReader(dialog.FileName))
                     {
-                        var x = stream.ReadToEnd();
-                        test = DecryptIO(x);
-                        Console.WriteLine(x);
+                        var SaveFileStream = stream.ReadToEnd();
+                        test = DecryptIO(SaveFileStream);
+                        Console.WriteLine(SaveFileStream);
                     }
                 }
             }
@@ -58,9 +59,9 @@ namespace DEP
             SaveData.Instance.HistoryList.Add(new List<Figure>(test));
         }
 
-        private List<Figure> DecryptIO(string x)
+        private List<Figure> DecryptIO(string SaveFile)
         {
-            var tempList = x.Split(
+            var tempList = SaveFile.Split(
                 new[] { Environment.NewLine },
                 StringSplitOptions.None
             );
@@ -117,45 +118,89 @@ namespace DEP
 
         private string ConvertListToIO(List<Figure> figures)
         {
-            string saveData = "";
-            foreach (var item in figures)
+            string SaveData = "";
+            List<Figure> GrouplessFigures = new List<Figure>();
+            List<Group> Groups = new List<Group>();
+
+            foreach(var item in figures)
+            {
+                if (item.group == null)
+                    GrouplessFigures.Add(item);
+            }
+
+            SaveData = GrouplessFiguresToSaveData(GrouplessFigures, 0);
+            SaveData += GroupedFiguresToSaveData();
+            
+            return SaveData;
+        }
+
+        private string GrouplessFiguresToSaveData(List<Figure> GrouplessFigures, int Tabs)
+        {
+            string SaveData = "";
+            foreach (var item in GrouplessFigures)
             {
                 int width = Math.Abs(item.start.X - item.end.X);
                 int height = Math.Abs(item.start.Y - item.end.Y);
                 int startX = item.start.X < item.end.X ? item.start.X : item.end.X;
                 int startY = item.start.Y < item.end.Y ? item.start.Y : item.end.Y;
 
-                if(item is xRectangle)
+                if (item is xRectangle)
                 {
-                    saveData += $"rectangle {startX} {startY} {width} {height}{Environment.NewLine}";
+                    SaveData += AddTabs(Tabs);
+                    SaveData += $"rectangle {startX} {startY} {width} {height}{Environment.NewLine}";
                 }
-                else if( item is Ellipse)
+                else if (item is Ellipse)
                 {
-                    saveData += $"ellipse {startX} {startY} {width} {height}{Environment.NewLine}";                    
+                    SaveData += AddTabs(Tabs);
+                    SaveData += $"ellipse {startX} {startY} {width} {height}{Environment.NewLine}";
                 }
             }
+
+            return SaveData;
+        }
+
+        private string AddTabs(int tabs)
+        {
+            string Tabs = "";
+            for (int i = 0; i < tabs; i++)
+            {
+                Tabs += "\t";
+            }
+            return Tabs;
+        }
+
+        private string GroupedFiguresToSaveData()
+        {
+            var Groups = SaveData.Instance.Groups;
+            string saveData = "";
+            int tabs = 1;
+            foreach (var item in Groups)
+            {
+                if (item.IsInGroup == null)
+                {
+                    saveData += $"group {item.Figures.Count+item.Groups.Count}{Environment.NewLine}";
+                    saveData += GrouplessFiguresToSaveData(item.Figures, tabs);
+                    if (item.Groups.Count > 0)
+                        saveData += RecursiveIO(item.Groups, tabs);
+                }
+            }
+            
+            
             return saveData;
         }
 
-
-        private string GroupIO(List<Group> Groups)
+        private string RecursiveIO(List<Group> groups, int tabs)
         {
-            string saveGroupData = "";
-            for (int i = 0; i < Groups.Count; i++)
+            string saveData = "";
+            foreach (var item in groups)
             {
-                var ExistsAsComposite = false;
-                if (Groups[i].Groups.Count > 0)
-                {
-                    for (int j = 0; j < Groups.Count; j++)
-                    {
-                        ExistsAsComposite = GroupContainsCompositeOf(Groups[j], Groups[i].ID);
-
-                    }
-                }
-                if (ExistsAsComposite)
-                    Groups.Remove(Groups[i]);
+                saveData += AddTabs(tabs);
+                saveData += $"group {item.Figures.Count + item.Groups.Count}{Environment.NewLine}";
+                saveData += GrouplessFiguresToSaveData(item.Figures, tabs+1);
+                if (item.Groups.Count > 0)
+                    saveData += RecursiveIO(item.Groups, tabs+1);
             }
-            return saveGroupData;
+            return saveData;
         }
 
         private bool GroupContainsCompositeOf(Group group, int groupID)
