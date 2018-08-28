@@ -101,23 +101,55 @@ namespace DEP
         }
         private void Resize_Down(MouseEventArgs e)
         {
+            SaveData.Instance.HistoryList.Add(CloneFigures());
+            var newFigures = new List<Figure>(SaveData.Instance.Figures);
+
             if (figure != null)
             {
-                figure.end = e.Location;
+                foreach (var item in newFigures)
+                {
+                    if (item == figure)
+                        item.end = e.Location;
+                }
             }
-            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-            SaveData.Instance.Figures.Add(figure);
+
+            SaveData.Instance.Figures = new List<Figure>(newFigures);
             this.Refresh();
+        }
+
+        public List<Figure> CloneFigures()
+        {
+            var figures = new List<Figure>();
+            foreach (var item in SaveData.Instance.Figures)
+            {
+                if (item.GetType().Equals(typeof(xRectangle)))
+                {
+                    figures.Add(new xRectangle(item));
+                }
+                else
+                {
+                    figures.Add(new Ellipse(item));
+                }
+            }
+            return figures;
         }
 
         private void Move_Down(MouseEventArgs e)
         {
+            
+            SaveData.Instance.HistoryList.Add(CloneFigures());
+            var newFigures = new List<Figure>(SaveData.Instance.Figures);
+
             if (figure != null)
             {
-                figure.Move(e.Location);
+                foreach (var item in newFigures)
+                {
+                    if (item == figure)
+                        item.Move(e.Location);
+                }
             }
-            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-            SaveData.Instance.Figures.Add(figure);
+
+            SaveData.Instance.Figures = new List<Figure>(newFigures);
             this.Refresh();
         }
 

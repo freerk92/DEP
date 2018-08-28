@@ -15,8 +15,8 @@ namespace DEP
             if(DataLink.HistoryList.Count > 0)
             {
                 DataLink.FutureList.Add(new List<Figure>(DataLink.Figures));
-                DataLink.HistoryList.Remove(DataLink.HistoryList.Last());
                 DataLink.Figures = new List<Figure>(DataLink.HistoryList.Last());
+                DataLink.HistoryList.Remove(DataLink.HistoryList.Last());
             }
         }
 
@@ -25,8 +25,15 @@ namespace DEP
             if(DataLink.FutureList.Count > 0)
             {
                 DataLink.HistoryList.Add(new List<Figure>(DataLink.Figures));
-                DataLink.FutureList.Remove(DataLink.FutureList.Last());
                 DataLink.Figures = new List<Figure>(DataLink.FutureList.Last());
+                try
+                {
+                    DataLink.FutureList.Remove(DataLink.FutureList.Last());
+                }
+                catch(Exception e)
+                {
+                    
+                }
             }
         }
         

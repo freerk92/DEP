@@ -36,6 +36,13 @@ namespace DEP
 
         public class Ellipse : Figure
         {
+            public Ellipse() { }
+
+            public Ellipse(Figure ellipse)
+            {
+                this.start = ellipse.start;
+                this.end = ellipse.end;
+            }
             // Drawthis by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
@@ -72,6 +79,12 @@ namespace DEP
 
         public class xRectangle : Figure
         {
+            public xRectangle(){}
+
+            public xRectangle(Figure rectangle){
+                this.start = rectangle.start;
+                this.end = rectangle.end;
+            }
             // Draw this by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
