@@ -39,7 +39,6 @@ namespace DEP
 
         public void Load()
         {
-            var test = new List<Figure>();
             using(OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Filter = "Txt files (*.txt)|*.txt";
@@ -50,55 +49,129 @@ namespace DEP
                     using(StreamReader stream = new StreamReader(dialog.FileName))
                     {
                         var SaveFileStream = stream.ReadToEnd();
-                        test = DecryptIO(SaveFileStream);
+                        DecryptIO(SaveFileStream);
                         Console.WriteLine(SaveFileStream);
                     }
                 }
             }
-            SaveData.Instance.Figures = test;
-            SaveData.Instance.HistoryList.Add(new List<Figure>(test));
+
         }
 
-        private List<Figure> DecryptIO(string SaveFile)
+        List<Group> Groups = new List<Group>();
+
+        private void DecryptIO(string SaveFile)
         {
+            GroupID = 0;
             var tempList = SaveFile.Split(
                 new[] { Environment.NewLine },
                 StringSplitOptions.None
-            );
+            ).ToList();
 
             var returnList = new List<Figure>();
+            var figures = new List<Figure>();
+            Group newGroup;
 
-            foreach (var item in tempList)
+            for (int i = 0; i < tempList.Count(); i++)
             {
-                if (string.IsNullOrEmpty(item))
-                    break;
-                Figure figure;
-                var itemList = item.Split(' ');
-                var startX = int.Parse(itemList[1]);
-                var startY = int.Parse(itemList[2]);
-                var width = int.Parse(itemList[3]);
-                var height = int.Parse(itemList[4]);
-
-
-                if(item.Contains("rectangle"))
+                if(!tempList[i].Contains("\t") && !tempList[i].Contains("group") && !String.IsNullOrEmpty(tempList[i]))
                 {
-                    figure = new xRectangle();
+                    figures.Add(decryptFigure(tempList[i]));
                 }
-                else if(item.Contains("ellipse")){
-                    figure = new Ellipse();
+                else if(!tempList[i].Contains("\t") && tempList[i].Contains("group"))
+                {
+                    newGroup = new Group(GroupID);
+                    Group currentGroup = getGroup(tempList, i, false, 1);
+                    newGroup.Figures = currentGroup.Figures;
+                    newGroup.Groups = currentGroup.Groups;
+                    Groups.Add(newGroup);
                 }
-                else{
-                    figure = new Ellipse();
-                }
-                figure.start = new Point(startX, startY);
-                figure.end = new Point(startX + width, startY + height);
-                figure.direction = DetermineDirection(figure);
-                returnList.Add(figure);
             }
 
+            figures.AddRange(GetFiguresFromGroups(Groups));
+            SaveData.Instance.Figures = figures;
+            SaveData.Instance.HistoryList.Add(new List<Figure>(figures));
+            SaveData.Instance.Groups = Groups;
+        }
+
+        private List<Figure> GetFiguresFromGroups(List<Group> groups)
+        {
+            var figures = new List<Figure>();
+            foreach (var item in groups)
+            {
+                figures.AddRange(item.Figures);
+                if (item.Groups.Count > 0)
+                    figures.AddRange(GetFiguresFromGroups(item.Groups));
+            }
+            return figures;
+        }
+
+        private int GroupID { get; set; }
+
+        private Group getGroup(List<string> tempList, int groupIndex, bool InnerGroup, int tabs)
+        {
+            var itemsInGroup = new List<string>();
+            var index = groupIndex + 1;
+            for (int i = index; i < tempList.Count(); i++)
+            {
+                if (tempList[i].Contains("\t"))
+                    itemsInGroup.Add(tempList[i]);
+                else
+                    break;
+            }
+
+            List<Group> groups = new List<Group>();
+            var figures = new List<Figure>();
+            Group newGroup = new Group(GroupID);
+            if(InnerGroup)
+                newGroup.IsInGroup = GroupID - 1;
+
+            for (int i = 0; i < itemsInGroup.Count(); i++)
+            {
+                itemsInGroup[i] = itemsInGroup[i].Remove(itemsInGroup[i].IndexOf("\t"), tabs);
+                if (!itemsInGroup[i].Contains("\t") && !itemsInGroup[i].Contains("group"))
+                {
+                    Figure figure = decryptFigure(itemsInGroup[i]);
+                    figure.group = newGroup;
+                    newGroup.Figures.Add(figure);
+                }
+                else if (!itemsInGroup[i].Contains("\t") && itemsInGroup[i].Contains("group"))
+                {
+                    GroupID++;
+                    Group currentGroup = getGroup(itemsInGroup, i, true, tabs+1);
+                    newGroup.AddToGroup(currentGroup);
+                    i += newGroup.Figures.Count + newGroup.Groups.Count - 1;
+                }
+            }
+            Groups.Add(newGroup);
+            return newGroup;
+        }
+
+        private Figure decryptFigure(string item)
+        {
+            Figure figure;
+            var itemList = item.Split(' ');
+            var startX = int.Parse(itemList[1]);
+            var startY = int.Parse(itemList[2]);
+            var width = int.Parse(itemList[3]);
+            var height = int.Parse(itemList[4]);
 
 
-            return returnList;
+            if (item.Contains("rectangle"))
+            {
+                figure = new xRectangle();
+            }
+            else if (item.Contains("ellipse"))
+            {
+                figure = new Ellipse();
+            }
+            else
+            {
+                figure = new Ellipse();
+            }
+            figure.start = new Point(startX, startY);
+            figure.end = new Point(startX + width, startY + height);
+            figure.direction = DetermineDirection(figure);
+            return figure;
         }
 
         private Direction DetermineDirection(Figure figure)

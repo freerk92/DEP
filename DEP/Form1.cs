@@ -111,7 +111,7 @@ namespace DEP
 
         private void Resize_Down(MouseEventArgs e)
         {
-            var currentFigures = SaveData.Instance.Figures;
+            var currentFigures = new List<Figure>(SaveData.Instance.Figures);
             if (figureSelected && SelectedFigure != null)
             {
                 foreach (var item in currentFigures)
@@ -197,7 +197,8 @@ namespace DEP
 
         public void StoreChange(List<Figure> currentFigures)
         {
-            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+            var newHistory = new List<Figure>(SaveData.Instance.Figures);
+            SaveData.Instance.HistoryList.Add(newHistory);
             SaveData.Instance.Figures = new List<Figure>(currentFigures);
         }
 
@@ -215,9 +216,9 @@ namespace DEP
 
         private void Move_Down(MouseEventArgs e)
         {
+            var currentFigures = new List<Figure>(SaveData.Instance.Figures);
             if (figureSelected && SelectedFigure != null)
             {
-                var currentFigures = SaveData.Instance.Figures;
                 foreach (var item in currentFigures)
                 {
                     if(item == SelectedFigure)
@@ -225,11 +226,9 @@ namespace DEP
                         item.Move(e.Location);
                     }
                 }
-                StoreChange(currentFigures);
             }
             else if(!figureSelected && SelectedGroup != null)
             {
-                var currentFigures = SaveData.Instance.Figures;
                 var StartPoint = SelectedGroup.Figures[0].start;
                 var EndPoint = e.Location;
                 var XDifference = StartPoint.X - EndPoint.X;
@@ -246,8 +245,8 @@ namespace DEP
                         }
                     }
                 }
-                StoreChange(currentFigures);
             }
+            StoreChange(currentFigures);
             this.Refresh();
         }
 
@@ -312,8 +311,8 @@ namespace DEP
             mDrawing = false;
             this.DetermineDirection(e);
             // Add the newly created ellipse into ellipse list
-            SaveData.Instance.Figures.Add(figure);
             SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
+            SaveData.Instance.Figures.Add(figure);
             SaveData.Instance.FutureList.Clear();
             this.Invalidate();
         }
@@ -366,6 +365,7 @@ namespace DEP
 
         private void AddToGroupButton_Click(object sender, EventArgs e)
         {
+            var currentFigures = new List<Figure>(SaveData.Instance.Figures);
             int index = (int)numericUpDown1.Value;
             int? existingIndex = null;
             for (int i = 0; i < Groups.Count; i++)
@@ -389,12 +389,11 @@ namespace DEP
                     Groups.Last().Figures.Add(SelectedFigure);
                 }
 
-                var list = SaveData.Instance.Figures;
-                for (int i = 0; i < list.Count; i++)
+                for (int i = 0; i < currentFigures.Count; i++)
                 {
-                    if (list[i].Equals(SelectedFigure))
+                    if (currentFigures[i].Equals(SelectedFigure))
                     {
-                        list[i].group = GetGroupWithID(index);
+                        currentFigures[i].group = GetGroupWithID(index);
                     }
                 }
             }
@@ -407,7 +406,7 @@ namespace DEP
                 }
             }
 
-
+            StoreChange(currentFigures);
         }
 
         private Group GetGroupWithID(int index)
@@ -466,7 +465,7 @@ namespace DEP
             {
                 checkBox.Text = "Figure";
                 figureSelected = true;
-                var currentFigures = SaveData.Instance.Figures;
+                var currentFigures = new List<Figure>(SaveData.Instance.Figures);
                 Color_Figures(currentFigures);           
             }
             Refresh();
@@ -485,20 +484,18 @@ namespace DEP
                 item.IsSelected = false;
                 item.IsMainGroupFigure = false;
 
-                if (item.group != null && item.group == group)
+                if (item.group != null && item.group.ID == group.ID)
                 {
                     if (FirstItem == item)
                         item.IsMainGroupFigure = true;
                     item.IsSelected = true;
 
                 }
-
-              if(item.group != null && GroupIDsList.Contains(item.group.ID))
+                else if(item.group != null && GroupIDsList.Contains(item.group.ID))
                 {
                     item.IsUnderlyingGroup = true;
                 }
             }
-
         }
 
         public List<int> FindUnderlyingGroupIDS(Group group)
