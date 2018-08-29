@@ -85,6 +85,7 @@
     </Compile>
     <Compile Include="Figure.cs" />
     <Compile Include="FileManager.cs" />
+    <Compile Include="DrawState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static DEP.Figure;
 
 namespace DEP
 {
@@ -10,13 +11,39 @@ namespace DEP
     {
         SaveData DataLink = SaveData.Instance;
 
+        public DrawState CloneFigures(DrawState OriginalDrawState)
+        {
+            var figures = new List<Figure>();
+            foreach (var item in OriginalDrawState.Figures)
+            {
+                if (item.GetType().Equals(typeof(xRectangle)))
+                {
+                    figures.Add(new xRectangle(item));
+                }
+                else
+                {
+                    figures.Add(new Ellipse(item));
+                }
+            }
+
+            var groups = new List<Group>();
+            foreach (var item in OriginalDrawState.Groups)
+            {
+                groups.Add(new Group(item));
+            }
+
+
+            var drawState = new DrawState(figures, groups);
+            return drawState;
+        }
+
         public void Undo()
         {
             if(DataLink.HistoryList.Count > 0)
             {
-                DataLink.FutureList.Add(new List<Figure>(DataLink.Figures));
+                DataLink.FutureList.Add(CloneFigures(DataLink.CurrentDrawState));
+                DataLink.CurrentDrawState = CloneFigures(DataLink.HistoryList.Last());
                 DataLink.HistoryList.Remove(DataLink.HistoryList.Last());
-                DataLink.Figures = new List<Figure>(DataLink.HistoryList.Last());
             }
         }
 
@@ -24,8 +51,8 @@ namespace DEP
         {
             if(DataLink.FutureList.Count > 0)
             {
-                DataLink.HistoryList.Add(new List<Figure>(DataLink.Figures));
-                DataLink.Figures = new List<Figure>(DataLink.FutureList.Last());
+                DataLink.HistoryList.Add(CloneFigures(DataLink.CurrentDrawState));
+                DataLink.CurrentDrawState = CloneFigures(DataLink.FutureList.Last());
                 DataLink.FutureList.Remove(DataLink.FutureList.Last());
             }
         }

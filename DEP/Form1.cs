@@ -18,11 +18,6 @@ namespace DEP
 
         Invoker inv = new Invoker();
 
-        public List<Group> Groups {
-            get => SaveData.Instance.Groups;
-            set => SaveData.Instance.Groups = value;
-        }
-
         Figure figure;
         Group SelectedGroup;
         Figure SelectedFigure;
@@ -32,7 +27,7 @@ namespace DEP
 
         public Form1()
         {
-            SaveData.Instance.HistoryList.Add(new List<Figure>());
+            SaveData.Instance.CurrentDrawState = new DrawState(new List<Figure>(), new List<Group>());
             inv.InsertCommands(save);
             inv.InsertCommands(load);
             inv.InsertCommands(undo);
@@ -83,9 +78,9 @@ namespace DEP
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            foreach (Figure figuretje in SaveData.Instance.Figures)
+            foreach (Figure drawFigure in SaveData.Instance.CurrentDrawState.Figures)
             {
-                figuretje.Draw(e);
+                drawFigure.Draw(e);
             }
         }
 
@@ -109,22 +104,60 @@ namespace DEP
             }
         }
 
+        public DrawState CloneDrawState()
+        {
+            var figures = new List<Figure>();
+            foreach (var item in SaveData.Instance.CurrentDrawState.Figures)
+            {
+                if (item.GetType().Equals(typeof(xRectangle)))
+                {
+                    figures.Add(new xRectangle(item));
+                }
+                else
+                {
+                    figures.Add(new Ellipse(item));
+                }
+            }
+
+            var groups = new List<Group>();
+            foreach(var item in SaveData.Instance.CurrentDrawState.Groups)
+            {
+                groups.Add(new Group(item));
+            }
+
+
+            var drawState = new DrawState(figures, groups);
+            return drawState;
+        }
+
         private void Resize_Down(MouseEventArgs e)
         {
-            var currentFigures = new List<Figure>(SaveData.Instance.Figures);
+            SaveData.Instance.HistoryList.Add(CloneDrawState());
+            var newFigures = new List<Figure>(SaveData.Instance.CurrentDrawState.Figures);
+            var newGroup = new List<Group>(SaveData.Instance.CurrentDrawState.Groups);
             if (figureSelected && SelectedFigure != null)
             {
-                foreach (var item in currentFigures)
+                foreach (var item in newFigures)
                 {
-                    if (item == SelectedFigure)
+                    if (item.Equals(SelectedFigure))
                     {
                         item.end = e.Location;
+                        SelectedFigure = SetSelectedFigure(item);
                     }
                 }
             }
             else if(!figureSelected && SelectedGroup != null)
             {
-                var mainFigure = SelectedGroup.Figures.First();
+
+                var groupFigures = new List<Figure>();
+                    foreach (var item in newFigures)
+                    {
+                        if (item.group.ID.Equals(SelectedGroup.ID))
+                            groupFigures.Add(item);
+                    }
+
+
+                var mainFigure = groupFigures.First();
                 var width = mainFigure.end.X-mainFigure.start.X;
                 var height = mainFigure.end.Y - mainFigure.start.Y;
                 var EndPoint = mainFigure.end;
@@ -132,26 +165,31 @@ namespace DEP
 
                 var XDifference = 1.0 - ((double)EndPoint.X - (double)e.X)/width;
                 var YDifference = 1.0 - ((double)EndPoint.Y - (double)e.Y)/height;
-                
 
-
-                foreach (var item in SelectedGroup.Figures)
+                if(XDifference < 0 || YDifference < 0)
                 {
-                    var index = currentFigures.IndexOf(item);
+                    MessageBox.Show("Negatief resizen is voor groepen niet ondersteund","Deze actie is niet mogelijk", MessageBoxButtons.OK);
+                    return;
+                }
+
+
+                foreach (var item in groupFigures)
+                {
+                    var index = newFigures.IndexOf(item);
                     var resizedItem = resizeFigure(item, XDifference, YDifference);
                     if (!item.IsMainGroupFigure)
-                        resizedItem = AddOffsetToResize(resizedItem, XDifference, YDifference);
-                    currentFigures[index] = resizedItem;
+                        //resizedItem = AddOffsetToResize(mainFigure, resizedItem, XDifference, YDifference);
+                    newFigures[index] = resizedItem;
                 }               
             }
 
-            StoreChange(currentFigures);
+            var drawState = new DrawState(newFigures, newGroup);
+            SaveData.Instance.CurrentDrawState = drawState;
             this.Refresh();
         }
 
-        private Figure AddOffsetToResize(Figure item, double xDifference, double yDifference)
+        private Figure AddOffsetToResize(Figure mainItem, Figure item, double xDifference, double yDifference)
         {
-            var mainItem = SelectedGroup.Figures.First();
             var offsetX = item.start.X - mainItem.start.X;
             var offSetY = item.start.Y - mainItem.start.Y;
             var newOffsetX = offsetX * Math.Abs(xDifference);
@@ -195,13 +233,6 @@ namespace DEP
             return item;
         }
 
-        public void StoreChange(List<Figure> currentFigures)
-        {
-            var newHistory = new List<Figure>(SaveData.Instance.Figures);
-            SaveData.Instance.HistoryList.Add(newHistory);
-            SaveData.Instance.Figures = new List<Figure>(currentFigures);
-        }
-
         private Figure resizeFigure(Figure item, double xDifference, double yDifference)
         {
             var width = item.end.X - item.start.X;
@@ -216,43 +247,62 @@ namespace DEP
 
         private void Move_Down(MouseEventArgs e)
         {
-            var currentFigures = new List<Figure>(SaveData.Instance.Figures);
+            SaveData.Instance.HistoryList.Add(CloneDrawState());
+            var newFigures = new List<Figure>(SaveData.Instance.CurrentDrawState.Figures);
+            var newGroup = new List<Group>(SaveData.Instance.CurrentDrawState.Groups);
+
+
+
             if (figureSelected && SelectedFigure != null)
             {
-                foreach (var item in currentFigures)
+                foreach (var item in newFigures)
                 {
-                    if(item == SelectedFigure)
+                    if(item.Equals(SelectedFigure))
                     {
                         item.Move(e.Location);
+                        SelectedFigure = SetSelectedFigure(item);
                     }
                 }
             }
             else if(!figureSelected && SelectedGroup != null)
             {
-                var StartPoint = SelectedGroup.Figures[0].start;
+
+                var groupFigures = new List<Figure>();
+                    foreach (var item in newFigures)
+                    {
+                        if (item.group.ID.Equals(SelectedGroup.ID))
+                            groupFigures.Add(item);
+                    }
+
+                var StartPoint = groupFigures[0].start;
                 var EndPoint = e.Location;
                 var XDifference = StartPoint.X - EndPoint.X;
                 var YDifference = StartPoint.Y - EndPoint.Y;
 
-                foreach (var item in SelectedGroup.Figures)
+                foreach (var item in groupFigures)
                 {
-                    foreach (var figure in currentFigures)
+                    foreach (var groupFigure in newFigures)
                     {
-                        if (figure == item)
+                        if (groupFigure.Equals(item))
                         {
-                            figure.start = new Point(figure.start.X - XDifference, figure.start.Y - YDifference);
-                            figure.end = new Point(figure.end.X - XDifference, figure.end.Y - YDifference);
+                            groupFigure.start = new Point(groupFigure.start.X - XDifference, groupFigure.start.Y - YDifference);
+                            groupFigure.end = new Point(groupFigure.end.X - XDifference, groupFigure.end.Y - YDifference);
+                            item.start = groupFigure.start;
+                            item.end = groupFigure.end;
                         }
                     }
                 }
+                SetSelectedGroup();
+                Color_Group();
             }
-            StoreChange(currentFigures);
+            var drawState = new DrawState(newFigures, newGroup);
+            SaveData.Instance.CurrentDrawState = drawState;
             this.Refresh();
         }
 
         private void Select_Down(MouseEventArgs e)
-        {
-            SelectedFigure = SaveData.Instance.Figures.FirstOrDefault(figure =>
+        { 
+            var selectedFigure = SaveData.Instance.CurrentDrawState.Figures.FirstOrDefault(figure =>
             {
                 if (Enumerable.Range(figure.start.X, figure.end.X).Contains(e.Location.X) || Enumerable.Range(figure.end.X, figure.start.X).Contains(e.Location.X))
                 {
@@ -264,19 +314,32 @@ namespace DEP
                 return false;
             });
 
-            if (SelectedFigure != null)
-            {
-                SelectedFigure.IsSelected = true;
-            }
 
-            foreach (var item in SaveData.Instance.Figures)
+            SelectedFigure = SetSelectedFigure(selectedFigure);
+
+
+            foreach (var item in SaveData.Instance.CurrentDrawState.Figures)
             {
-                if(item != SelectedFigure)
+                if(!item.Equals(SelectedFigure))
                 {
                     item.IsSelected = false;
                 }
+                else
+                {
+                    item.IsSelected = true;
+                }
             }
             Refresh();
+        }
+
+        private Figure SetSelectedFigure(Figure selectedFigure)
+        {
+            if(selectedFigure.GetType().Equals(typeof(xRectangle)))
+            {
+                return new xRectangle(selectedFigure);
+            }
+
+            return new Ellipse(selectedFigure);
         }
 
         private void Figure_Down(MouseEventArgs e)
@@ -310,9 +373,11 @@ namespace DEP
             if (!mDrawing) return;
             mDrawing = false;
             this.DetermineDirection(e);
-            // Add the newly created ellipse into ellipse list
-            SaveData.Instance.HistoryList.Add(new List<Figure>(SaveData.Instance.Figures));
-            SaveData.Instance.Figures.Add(figure);
+
+            SaveData.Instance.HistoryList.Add(CloneDrawState());
+            var newFigures = CloneDrawState();
+            newFigures.Figures.Add(figure);
+            SaveData.Instance.CurrentDrawState = newFigures;
             SaveData.Instance.FutureList.Clear();
             this.Invalidate();
         }
@@ -346,7 +411,7 @@ namespace DEP
         {
             var v = (Button)sender;
             v.Click -= Undo_Click;
-            if(SaveData.Instance.Figures.Count > 0)
+            if(SaveData.Instance.CurrentDrawState.Figures.Count > 0)
             {
                 inv.PressButtonOn(2);
                 Refresh();
@@ -365,54 +430,57 @@ namespace DEP
 
         private void AddToGroupButton_Click(object sender, EventArgs e)
         {
-            var currentFigures = new List<Figure>(SaveData.Instance.Figures);
+            SaveData.Instance.HistoryList.Add(CloneDrawState());
+            var newDrawState = new DrawState(SaveData.Instance.CurrentDrawState);
+
+            //Check of de groep al bestaat, als de groep bestaat wordt wordt de index opgeslagen in existingIndex
             int index = (int)numericUpDown1.Value;
-            int? existingIndex = null;
-            for (int i = 0; i < Groups.Count; i++)
+            bool existingIndex = false;
+            int? GroupIndex = null;
+            for (int i = 0; i < newDrawState.Groups.Count; i++)
             {
-                if (Groups[i].ID == index)
+                if (newDrawState.Groups[i].ID == index)
                 {
-                    existingIndex = i;
+                    existingIndex = true;
+                    GroupIndex = i;
                 }
             }
 
+            //Voeg figuur toe aan groep
             if(figureSelected && figure != null)
             {
-                if (existingIndex.HasValue)
+                //Groep bestaat
+                if (!existingIndex)
                 {
-                    if (!Groups[existingIndex.Value].Figures.Contains(SelectedFigure))
-                        Groups[existingIndex.Value].AddToGroup(SelectedFigure);
-                }
-                else
-                {
-                    Groups.Add(new Group(index));
-                    Groups.Last().Figures.Add(SelectedFigure);
+                   newDrawState.Groups.Add(new Group(index));
                 }
 
-                for (int i = 0; i < currentFigures.Count; i++)
+                for (int i = 0; i < newDrawState.Figures.Count; i++)
                 {
-                    if (currentFigures[i].Equals(SelectedFigure))
+                    if (newDrawState.Figures[i].Equals(SelectedFigure))
                     {
-                        currentFigures[i].group = GetGroupWithID(index);
+                        newDrawState.Figures[i].group = GetGroupWithID(index);
                     }
                 }
             }
+            //Voeg groep toe aan groep
             else if(!figureSelected && SelectedGroup != null)
             {
                 if (SelectedGroup.IsInGroup == null)
                 {
-                    Groups[existingIndex.Value].AddToGroup(SelectedGroup);
-                    SelectedGroup.IsInGroup = existingIndex;
+                    newDrawState.Groups[GroupIndex.Value].AddToGroup(SelectedGroup);
+                    SelectedGroup.IsInGroup = GroupIndex;
                 }
             }
 
-            StoreChange(currentFigures);
+            SaveData.Instance.CurrentDrawState = new DrawState(newDrawState);
         }
 
         private Group GetGroupWithID(int index)
         {
             Group group = null;
-            foreach (var item in Groups)
+            var currentDrawState = new DrawState(SaveData.Instance.CurrentDrawState);
+            foreach (var item in currentDrawState.Groups)
             {
                 if (item.ID == index)
                     group = item;
@@ -423,31 +491,21 @@ namespace DEP
 
         private void SelectGroup_Click(object sender, EventArgs e)
         {
-            
-            int index = (int)numericUpDown1.Value;
-            int? existingIndex = null;
-            for (int i = 0; i < Groups.Count; i++)
+            SetSelectedGroup();
+            if(SelectedGroup != null)
             {
-                if (Groups[i].ID == index)
-                {
-                    existingIndex = i;
-                }
-            }
-
-            if(existingIndex.HasValue)
-            {
-                SelectedGroup = Groups[existingIndex.Value];
-                Color_Group(SelectedGroup);
+                Color_Group();
             }
             this.Refresh();
         }
 
         private void ResetColors()
         {
-            foreach (var item in SaveData.Instance.Figures)
+            foreach (var item in SaveData.Instance.CurrentDrawState.Figures)
             {
                 item.IsSelected = false;
                 item.IsMainGroupFigure = false;
+                item.IsUnderlyingGroup = false;
             }
         }
 
@@ -459,37 +517,60 @@ namespace DEP
                 checkBox.Text = "Group";
                 figureSelected = false;
                 if (SelectedGroup != null)
-                    Color_Group(SelectedGroup);
+                {
+                    SetSelectedGroup();
+                    Color_Group();
+                }
             }
             else
             {
                 checkBox.Text = "Figure";
                 figureSelected = true;
-                var currentFigures = new List<Figure>(SaveData.Instance.Figures);
-                Color_Figures(currentFigures);           
+                var currentDrawState = SaveData.Instance.CurrentDrawState;
+                Color_Figures(currentDrawState);           
             }
             Refresh();
         }
 
-        private void Color_Group(Group group)
+        private void SetSelectedGroup()
         {
-            var FirstItem = SelectedGroup.Figures[0];
-            var list = SaveData.Instance.Figures;
-            var GroupIDsList = FindUnderlyingGroupIDS(group);
+            var currentDrawState = new DrawState(SaveData.Instance.CurrentDrawState);
+            int index = (int)numericUpDown1.Value;
+            int? existingIndex = null;
+            for (int i = 0; i < currentDrawState.Groups.Count; i++)
+            {
+                if (currentDrawState.Groups[i].ID == index)
+                {
+                    existingIndex = i;
+                }
+            }
 
+            if (existingIndex.HasValue)
+            {
+                SelectedGroup = currentDrawState.Groups[existingIndex.Value];
+            }
+        }
 
-            foreach (var item in list)
+        private void Color_Group()
+        {
+            bool FirstItem = true;
+            var Figures = SaveData.Instance.CurrentDrawState.Figures;
+            var GroupIDsList = FindUnderlyingGroupIDS(SelectedGroup);
+
+            foreach (var item in Figures)
             {
                 item.IsUnderlyingGroup = false;
                 item.IsSelected = false;
                 item.IsMainGroupFigure = false;
 
-                if (item.group != null && item.group.ID == group.ID)
+                if (item.group != null && item.group.ID == SelectedGroup.ID)
                 {
-                    if (FirstItem == item)
+                    if (FirstItem)
+                    {
                         item.IsMainGroupFigure = true;
+                        FirstItem = false;
+                    }
                     item.IsSelected = true;
-
                 }
                 else if(item.group != null && GroupIDsList.Contains(item.group.ID))
                 {
@@ -510,11 +591,11 @@ namespace DEP
             return list;
         }
 
-        public void Color_Figures(List<Figure> FiguresList)
+        public void Color_Figures(DrawState currentDrawState)
         {
-            foreach (var item in FiguresList)
+            foreach (var item in currentDrawState.Figures)
             {
-                if (item == SelectedFigure)
+                if (item.Equals(SelectedFigure))
                 {
                     item.IsSelected = true;
                 }

@@ -19,6 +19,14 @@ namespace DEP
             ID = index;
         }
 
+        public Group(Group group)
+        {
+            this.ID = group.ID;
+            this.Figures = group.Figures;
+            this.Groups = group.Groups;
+            this.IsInGroup = group.IsInGroup;
+        }
+
         public void AddToGroup(Figure figure)
         {
             Figures.Add(figure);

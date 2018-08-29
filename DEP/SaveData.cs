@@ -20,23 +20,23 @@ namespace DEP
             }
         }
 
-        private List<Figure> figures = new List<Figure>();
+        private DrawState currentDrawState = new DrawState();
 
-        public List<Figure> Figures
+        public DrawState CurrentDrawState
         {
             get
             {
-                return figures;
+                return currentDrawState;
             }
             set
             {
-                figures = value;
+                currentDrawState = value;
             }
         }
 
-        private List<List<Figure>> historyList = new List<List<Figure>>();
+        private List<DrawState> historyList = new List<DrawState>();
 
-        public List<List<Figure>> HistoryList
+        public List<DrawState> HistoryList
         {
             get
             {
@@ -48,9 +48,9 @@ namespace DEP
             }
         }
 
-        private List<List<Figure>> futureList = new List<List<Figure>>();
+        private List<DrawState> futureList = new List<DrawState>();
 
-        public List<List<Figure>> FutureList
+        public List<DrawState> FutureList
         {
             get
             {
@@ -62,19 +62,5 @@ namespace DEP
             }
         }
 
-
-        private List<Group> groups = new List<Group>();
-
-        public List<Group> Groups
-        {
-            get
-            {
-                return groups;
-            }
-            set
-            {
-                groups = value;
-            }
-        }
     }
 }

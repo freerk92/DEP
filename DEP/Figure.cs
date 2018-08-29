@@ -50,6 +50,15 @@ namespace DEP
 
         public class Ellipse : Figure
         {
+            public Ellipse(){}
+
+            public Ellipse(Figure item)
+            {
+                this.start = item.start;
+                this.end = item.end;
+                this.group = item.group;
+            }
+
             // Drawthis by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
@@ -85,6 +94,15 @@ namespace DEP
 
         public class xRectangle : Figure
         {
+            public xRectangle(){}
+
+            public xRectangle(Figure item)
+            {
+                this.start = item.start;
+                this.end = item.end;
+                this.group = item.group;
+            }
+
             // Draw this by its start, end points and direction
             public override void Draw(PaintEventArgs e)
             {
@@ -117,5 +135,13 @@ namespace DEP
             }
 
         }
+
+        public override bool Equals(object obj)
+        {
+            Figure compareFigure = (Figure)obj;
+            return (this.start == compareFigure.start && this.end == compareFigure.end);
+        }
+
+
     }
 }

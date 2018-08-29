@@ -17,7 +17,7 @@ namespace DEP
 
         public void Save()
         {
-            var figures = SaveData.Instance.Figures;
+            var figures = SaveData.Instance.CurrentDrawState.Figures;
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
                 dialog.Filter = "txt files (*.txt)|*.txt";
@@ -88,9 +88,8 @@ namespace DEP
             }
 
             figures.AddRange(GetFiguresFromGroups(Groups));
-            SaveData.Instance.Figures = figures;
-            SaveData.Instance.HistoryList.Add(new List<Figure>(figures));
-            SaveData.Instance.Groups = Groups;
+            SaveData.Instance.CurrentDrawState = new DrawState(figures, Groups);
+            SaveData.Instance.HistoryList.Add(new DrawState(figures, Groups));
         }
 
         private List<Figure> GetFiguresFromGroups(List<Group> groups)
@@ -244,7 +243,7 @@ namespace DEP
 
         private string GroupedFiguresToSaveData()
         {
-            var Groups = SaveData.Instance.Groups;
+            var Groups = SaveData.Instance.CurrentDrawState.Groups;
             string saveData = "";
             int tabs = 1;
             foreach (var item in Groups)
