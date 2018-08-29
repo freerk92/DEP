@@ -58,6 +58,7 @@ namespace DEP
         }
 
         List<Group> Groups = new List<Group>();
+        List<Figure> Figures = new List<Figure>();
 
         private void DecryptIO(string SaveFile)
         {
@@ -68,14 +69,13 @@ namespace DEP
             ).ToList();
 
             var returnList = new List<Figure>();
-            var figures = new List<Figure>();
             Group newGroup;
 
             for (int i = 0; i < tempList.Count(); i++)
             {
                 if(!tempList[i].Contains("\t") && !tempList[i].Contains("group") && !String.IsNullOrEmpty(tempList[i]))
                 {
-                    figures.Add(decryptFigure(tempList[i]));
+                    Figures.Add(decryptFigure(tempList[i]));
                 }
                 else if(!tempList[i].Contains("\t") && tempList[i].Contains("group"))
                 {
@@ -87,9 +87,8 @@ namespace DEP
                 }
             }
 
-            figures.AddRange(GetFiguresFromGroups(Groups));
-            SaveData.Instance.CurrentDrawState = new DrawState(figures, Groups);
-            SaveData.Instance.HistoryList.Add(new DrawState(figures, Groups));
+            SaveData.Instance.CurrentDrawState = new DrawState(Figures, Groups);
+            SaveData.Instance.HistoryList.Add(new DrawState(Figures, Groups));
         }
 
         private List<Figure> GetFiguresFromGroups(List<Group> groups)
@@ -124,6 +123,8 @@ namespace DEP
             if(InnerGroup)
                 newGroup.IsInGroup = GroupID - 1;
 
+            int FiguresCount = 0;
+
             for (int i = 0; i < itemsInGroup.Count(); i++)
             {
                 itemsInGroup[i] = itemsInGroup[i].Remove(itemsInGroup[i].IndexOf("\t"), tabs);
@@ -131,7 +132,8 @@ namespace DEP
                 {
                     Figure figure = decryptFigure(itemsInGroup[i]);
                     figure.group = newGroup;
-                    newGroup.Figures.Add(figure);
+                    Figures.Add(figure);
+                    FiguresCount++;
                 }
                 else if (!itemsInGroup[i].Contains("\t") && itemsInGroup[i].Contains("group"))
                 {
@@ -192,7 +194,6 @@ namespace DEP
         {
             string SaveData = "";
             List<Figure> GrouplessFigures = new List<Figure>();
-            List<Group> Groups = new List<Group>();
 
             foreach(var item in figures)
             {
@@ -243,10 +244,22 @@ namespace DEP
 
         private string GroupedFiguresToSaveData()
         {
-            var Groups = SaveData.Instance.CurrentDrawState.Groups;
+            var groups = new List<Group>();
+            foreach (var item in SaveData.Instance.CurrentDrawState.Groups)
+            {
+                groups.Add(new Group(item));
+            }
+
+            foreach (var item in SaveData.Instance.CurrentDrawState.Figures)
+            {
+                if (item.group != null)
+                    groups[item.group.ID].AddToGroup(item);
+            }
+
+
             string saveData = "";
             int tabs = 1;
-            foreach (var item in Groups)
+            foreach (var item in groups)
             {
                 if (item.IsInGroup == null)
                 {
