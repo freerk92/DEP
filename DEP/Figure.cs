@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace DEP
 {
-    public abstract class Figure
+    public abstract class Figure : IVisitable
     {
         // The point user press Mouse Down
         public Point start;
@@ -13,6 +13,7 @@ namespace DEP
         // Direction comparing the end point and the start point
         public Direction direction;
         public bool IsSelected { get; set; }
+        public bool IsSelectedInGroup { get; set; }
         public bool IsMainGroupFigure { get; set; }
         public bool IsUnderlyingGroup { get; set; }
         public abstract void Draw(PaintEventArgs e);
@@ -23,21 +24,18 @@ namespace DEP
             {
                 if (IsUnderlyingGroup)
                     return Pens.Orange;
-                if (IsMainGroupFigure && IsSelected)
+                if (IsMainGroupFigure && IsSelectedInGroup)
                     return Pens.Blue;
+                if (IsSelectedInGroup)
+                    return Pens.Red;
                 return IsSelected ? Pens.Red : Pens.Black;
             }
         }
 
-        public void Move(Point location)
+        public void Accept(IVisitor visitor)
         {
-            int x = Math.Abs(start.X - end.X);
-            int y = Math.Abs(start.Y - end.Y);
-
-            start = location;
-            end = new Point(location.X + x, location.Y + y);
+            visitor.Visit(this);
         }
-
 
         // Four quadrants in coordinate
         public enum Direction
@@ -141,7 +139,6 @@ namespace DEP
             Figure compareFigure = (Figure)obj;
             return (this.start == compareFigure.start && this.end == compareFigure.end);
         }
-
 
     }
 }

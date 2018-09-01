@@ -86,6 +86,7 @@
     <Compile Include="Figure.cs" />
     <Compile Include="FileManager.cs" />
     <Compile Include="DrawState.cs" />
+    <Compile Include="VisitorPattern.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

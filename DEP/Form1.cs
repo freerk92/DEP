@@ -134,14 +134,15 @@ namespace DEP
         {
             SaveData.Instance.HistoryList.Add(CloneDrawState());
             var newFigures = new List<Figure>(SaveData.Instance.CurrentDrawState.Figures);
-            var newGroup = new List<Group>(SaveData.Instance.CurrentDrawState.Groups);
+            var visitor = new ResizeVisitor(e);
+
             if (figureSelected && SelectedFigure != null)
             {
                 foreach (var item in newFigures)
                 {
                     if (item.Equals(SelectedFigure))
                     {
-                        item.end = e.Location;
+                        item.Accept(visitor);
                         SelectedFigure = SetSelectedFigure(item);
                     }
                 }
@@ -149,7 +150,7 @@ namespace DEP
             else if(!figureSelected && SelectedGroup != null)
             {
                 try{
-                    newFigures = SelectedGroup.ResizeGroup(newFigures, e);
+                    SelectedGroup.Accept(visitor);
                 }
                 catch(Exception ex)
                 {
@@ -158,8 +159,6 @@ namespace DEP
          
             }
 
-            var drawState = new DrawState(newFigures, newGroup);
-            SaveData.Instance.CurrentDrawState = drawState;
             this.Refresh();
         }
 
@@ -212,7 +211,7 @@ namespace DEP
         {
             SaveData.Instance.HistoryList.Add(CloneDrawState());
             var newFigures = new List<Figure>(SaveData.Instance.CurrentDrawState.Figures);
-            var newGroup = new List<Group>(SaveData.Instance.CurrentDrawState.Groups);
+            var visitor = new MoveVisitor(e);
 
 
 
@@ -222,20 +221,17 @@ namespace DEP
                 {
                     if(item.Equals(SelectedFigure))
                     {
-                        item.Move(e.Location);
+                        item.Accept(visitor);
                         SelectedFigure = SetSelectedFigure(item);
                     }
                 }
             }
             else if(!figureSelected && SelectedGroup != null)
             {
-
-                newFigures = SelectedGroup.MoveGroup(newFigures, e);
+                SelectedGroup.Accept(visitor);
                 SetSelectedGroup();
                 Color_Group();
             }
-            var drawState = new DrawState(newFigures, newGroup);
-            SaveData.Instance.CurrentDrawState = drawState;
             this.Refresh();
         }
 
@@ -445,6 +441,7 @@ namespace DEP
                 item.IsSelected = false;
                 item.IsMainGroupFigure = false;
                 item.IsUnderlyingGroup = false;
+                item.IsSelectedInGroup = false;
             }
         }
 
@@ -495,13 +492,10 @@ namespace DEP
             bool FirstItem = true;
             var Figures = SaveData.Instance.CurrentDrawState.Figures;
             var GroupIDsList = FindUnderlyingGroupIDS(SelectedGroup);
+            ResetColors();
 
             foreach (var item in Figures)
             {
-                item.IsUnderlyingGroup = false;
-                item.IsSelected = false;
-                item.IsMainGroupFigure = false;
-
                 if (item.group != null && item.group.ID == SelectedGroup.ID)
                 {
                     if (FirstItem)
@@ -509,7 +503,7 @@ namespace DEP
                         item.IsMainGroupFigure = true;
                         FirstItem = false;
                     }
-                    item.IsSelected = true;
+                    item.IsSelectedInGroup = true;
                 }
                 else if(item.group != null && GroupIDsList.Contains(item.group.ID))
                 {
