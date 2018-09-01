@@ -10,7 +10,7 @@ namespace DEP
     {
         void Visit(Figure figure);
         void Visit(Group group);
-        void Visit();
+        void Visit(FileManager manager);
     }
 
     public interface IVisitable
@@ -92,7 +92,7 @@ namespace DEP
             return item;
         }
 
-        public void Visit()
+        public void Visit(FileManager manager)
         {
             throw new NotImplementedException();
         }
@@ -156,11 +156,28 @@ namespace DEP
             SaveData.Instance.CurrentDrawState = drawState;
         }
 
-        public void Visit()
+        public void Visit(FileManager manager)
         {
             throw new NotImplementedException();
         }
     }
 
+    public class SaveVisitor : IVisitor
+    {
+        public void Visit(Figure figure)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(Group group)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(FileManager manager)
+        {
+            manager.Save();
+        }
+    }
 
 }

@@ -60,7 +60,9 @@ namespace DEP
         public void Save()
         {
             FileManager manager = new FileManager();
-            manager.Save();
+            IVisitor visitor = new SaveVisitor();
+            manager.Accept(visitor);
+            //manager.Save();
         }
 
         public void Load()

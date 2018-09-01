@@ -8,12 +8,14 @@ using static DEP.Figure;
 
 namespace DEP
 {
-    public class FileManager
+    public class FileManager : IVisitable
     {
         public FileManager()
         {
             
         }
+
+
 
         public void Save()
         {
@@ -301,5 +303,9 @@ namespace DEP
             return answer;
         }
 
+        public void Accept(IVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
     }
 }
