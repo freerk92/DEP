@@ -161,15 +161,18 @@ namespace DEP
 
             if (item.Contains("rectangle"))
             {
-                figure = new xRectangle();
+                IFigure ifigure= new xRectangle();
+                figure = new Figure(ifigure);
             }
             else if (item.Contains("ellipse"))
             {
-                figure = new Ellipse();
+                IFigure ifigure = new Ellipse();
+                figure = new Figure(ifigure);
             }
             else
             {
-                figure = new Ellipse();
+                IFigure ifigure = new Ellipse();
+                figure = new Figure(ifigure);
             }
             figure.start = new Point(startX, startY);
             figure.end = new Point(startX + width, startY + height);
@@ -214,21 +217,8 @@ namespace DEP
             string SaveData = "";
             foreach (var item in GrouplessFigures)
             {
-                int width = Math.Abs(item.start.X - item.end.X);
-                int height = Math.Abs(item.start.Y - item.end.Y);
-                int startX = item.start.X < item.end.X ? item.start.X : item.end.X;
-                int startY = item.start.Y < item.end.Y ? item.start.Y : item.end.Y;
-
-                if (item is xRectangle)
-                {
-                    SaveData += AddTabs(Tabs);
-                    SaveData += $"rectangle {startX} {startY} {width} {height}{Environment.NewLine}";
-                }
-                else if (item is Ellipse)
-                {
-                    SaveData += AddTabs(Tabs);
-                    SaveData += $"ellipse {startX} {startY} {width} {height}{Environment.NewLine}";
-                }
+                SaveData += AddTabs(Tabs);
+                SaveData += item.StrategyFigure.ToString(item);                
             }
 
             return SaveData;

@@ -72,7 +72,7 @@ namespace DEP
             Refresh();
             if (mDrawing)
             {
-                figure.Draw(e);
+                figure.StrategyFigure.Draw(e, figure);
             }
         }
 
@@ -80,8 +80,10 @@ namespace DEP
         {
             foreach (Figure drawFigure in SaveData.Instance.CurrentDrawState.Figures)
             {
-                drawFigure.Draw(e);
+                drawFigure.StrategyFigure.Draw(e, drawFigure);
             }
+            if(figure != null)
+                figure.StrategyFigure.Draw(e, figure);
         }
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
@@ -109,14 +111,7 @@ namespace DEP
             var figures = new List<Figure>();
             foreach (var item in SaveData.Instance.CurrentDrawState.Figures)
             {
-                if (item.GetType().Equals(typeof(xRectangle)))
-                {
-                    figures.Add(new xRectangle(item));
-                }
-                else
-                {
-                    figures.Add(new Ellipse(item));
-                }
+                figures.Add(new Figure(item));
             }
 
             var groups = new List<Group>();
@@ -236,7 +231,8 @@ namespace DEP
         }
 
         private void Select_Down(MouseEventArgs e)
-        { 
+        {
+            ResetColors();
             var selectedFigure = SaveData.Instance.CurrentDrawState.Figures.FirstOrDefault(figure =>
             {
                 if (Enumerable.Range(figure.start.X, figure.end.X).Contains(e.Location.X) || Enumerable.Range(figure.end.X, figure.start.X).Contains(e.Location.X))
@@ -269,23 +265,20 @@ namespace DEP
 
         private Figure SetSelectedFigure(Figure selectedFigure)
         {
-            if(selectedFigure.GetType().Equals(typeof(xRectangle)))
-            {
-                return new xRectangle(selectedFigure);
-            }
-
-            return new Ellipse(selectedFigure);
+            return new Figure(selectedFigure);
         }
 
         private void Figure_Down(MouseEventArgs e)
         {
             if (Circle.Checked)
             {
-                figure = new Ellipse();
+                IFigure ifigure = new Ellipse();
+                figure = new Figure(ifigure);
             }
             else
             {
-                figure = new xRectangle();
+                IFigure ifigure = new xRectangle();
+                figure = new Figure(ifigure);
             }
             figure.start = e.Location;
             if (e.Button == MouseButtons.Left)

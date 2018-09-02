@@ -16,14 +16,7 @@ namespace DEP
             var figures = new List<Figure>();
             foreach (var item in OriginalDrawState.Figures)
             {
-                if (item.GetType().Equals(typeof(xRectangle)))
-                {
-                    figures.Add(new xRectangle(item));
-                }
-                else
-                {
-                    figures.Add(new Ellipse(item));
-                }
+                figures.Add(new Figure(item));
             }
 
             var groups = new List<Group>();
