@@ -531,5 +531,11 @@ namespace DEP
                 }
             }
         }
+
+        private void AddDecoratorButton_Click(object sender, EventArgs e)
+        {
+            DecoratorPopUp decoratorForm = new DecoratorPopUp();
+            decoratorForm.Show();
+        }
     }
 }

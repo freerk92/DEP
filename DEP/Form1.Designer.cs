@@ -48,6 +48,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.AddDecoratorButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -235,11 +236,22 @@
             this.label5.TabIndex = 19;
             this.label5.Text = "label5";
             // 
+            // AddDecoratorButton
+            // 
+            this.AddDecoratorButton.Location = new System.Drawing.Point(13, 293);
+            this.AddDecoratorButton.Name = "AddDecoratorButton";
+            this.AddDecoratorButton.Size = new System.Drawing.Size(88, 23);
+            this.AddDecoratorButton.TabIndex = 20;
+            this.AddDecoratorButton.Text = "Add Decorator";
+            this.AddDecoratorButton.UseVisualStyleBackColor = true;
+            this.AddDecoratorButton.Click += new System.EventHandler(this.AddDecoratorButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 629);
+            this.Controls.Add(this.AddDecoratorButton);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -294,6 +306,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button AddDecoratorButton;
     }
 }
 
