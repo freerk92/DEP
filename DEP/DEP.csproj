@@ -97,6 +97,7 @@
     <Compile Include="DrawState.cs" />
     <Compile Include="StrategyPattern.cs" />
     <Compile Include="VisitorPattern.cs" />
+    <Compile Include="DecoratorPattern.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

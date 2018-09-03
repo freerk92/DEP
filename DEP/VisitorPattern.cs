@@ -112,14 +112,26 @@ namespace DEP
             newGroup = new List<Group>(SaveData.Instance.CurrentDrawState.Groups);
         }
 
-        public void Visit(Figure figure)
+        void IVisitor.Visit(Figure figure)
         {
             int x = Math.Abs(figure.start.X - figure.end.X);
             int y = Math.Abs(figure.start.Y - figure.end.Y);
 
+            Decoration decoration = null;
+
+            foreach (var item in SaveData.Instance.DecorationList)
+            {
+                if (item.decoratedFigure.Equals(figure))
+                {
+                    item.ornamentLocation = new Point(e.Location.X + (x / 2), e.Location.Y - 25);
+                    decoration = item;
+                }
+            }
+
             figure.start = e.Location;
             figure.end = new Point(e.X + x, e.Y + y);
-
+            if (decoration != null)
+                decoration.decoratedFigure = figure;
             var drawState = new DrawState(newFigures, newGroup);
             SaveData.Instance.CurrentDrawState = drawState;
         }

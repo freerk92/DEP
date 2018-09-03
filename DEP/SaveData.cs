@@ -62,5 +62,19 @@ namespace DEP
             }
         }
 
+        private List<Decoration> decoList = new List<Decoration>();
+
+        public List<Decoration> DecorationList
+        {
+            get
+            {
+                return decoList;
+            }
+            set
+            {
+                decoList = value;
+            }
+        }
+
     }
 }

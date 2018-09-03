@@ -34,7 +34,7 @@ namespace DEP
             inv.InsertCommands(redo);
             InitializeComponent();
         }
-        
+
         // Determine the direction of ellipse by start and end points
         private void DetermineDirection(MouseEventArgs e)
         {
@@ -81,6 +81,10 @@ namespace DEP
             foreach (Figure drawFigure in SaveData.Instance.CurrentDrawState.Figures)
             {
                 drawFigure.StrategyFigure.Draw(e, drawFigure);
+            }
+            foreach(var deco in SaveData.Instance.DecorationList)
+            {
+                deco.Draw(e, deco.decoratedFigure);
             }
             if(figure != null)
                 figure.StrategyFigure.Draw(e, figure);
@@ -534,8 +538,19 @@ namespace DEP
 
         private void AddDecoratorButton_Click(object sender, EventArgs e)
         {
-            DecoratorPopUp decoratorForm = new DecoratorPopUp();
-            decoratorForm.Show();
+            if (figureSelected && SelectedFigure != null)
+            {
+                DecoratorPopUp decoratorForm = new DecoratorPopUp(SelectedFigure, this);
+                decoratorForm.Show();
+
+                Refresh();
+            }
+            else if (!figureSelected && SelectedGroup != null)
+            {
+                DecoratorPopUp decoratorForm = new DecoratorPopUp(SelectedGroup, this);
+                decoratorForm.Show();
+            }
         }
+
     }
 }

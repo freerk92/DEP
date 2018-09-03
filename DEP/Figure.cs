@@ -42,7 +42,6 @@ namespace DEP
             StrategyFigure = item.StrategyFigure;
         }
 
-
         public Figure(IFigure figure)
         {
             this.StrategyFigure = figure;
@@ -67,6 +66,7 @@ namespace DEP
             Figure compareFigure = (Figure)obj;
             return (start == compareFigure.start && end == compareFigure.end);
         }
+
 
     }
 
