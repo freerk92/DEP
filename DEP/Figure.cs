@@ -121,7 +121,7 @@ namespace DEP
         }
     }
 
-    public sealed class xRectangle : IFigure
+    public class xRectangle : IFigure
     {
         // Draw this by its start, end points and direction
         public void Draw(PaintEventArgs e, Figure figure)

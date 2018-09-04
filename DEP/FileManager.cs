@@ -20,6 +20,7 @@ namespace DEP
         public void Save()
         {
             var figures = SaveData.Instance.CurrentDrawState.Figures;
+            var decorations = SaveData.Instance.CurrentDrawState.Decorations;
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
                 dialog.Filter = "txt files (*.txt)|*.txt";
@@ -32,7 +33,7 @@ namespace DEP
                     using (StreamWriter stream = new StreamWriter(dialog.FileName))
                     {
                         // Save data
-                        var saveData = ConvertListToIO(figures);
+                        var saveData = ConvertListToIO(figures, decorations);
                         stream.WriteLine(saveData);
                     }
                 }
@@ -195,10 +196,10 @@ namespace DEP
         }
 
 
-        private string ConvertListToIO(List<Figure> figures)
+        private string ConvertListToIO(List<Figure> figures, List<Decoration> decorations)
         {
-            string SaveData = "";
-            List<Figure> GrouplessFigures = new List<Figure>();
+            string saveData = "";
+            var GrouplessFigures = new List<Figure>();
 
             foreach(var item in figures)
             {
@@ -206,10 +207,24 @@ namespace DEP
                     GrouplessFigures.Add(item);
             }
 
-            SaveData = GrouplessFiguresToSaveData(GrouplessFigures, 0);
-            SaveData += GroupedFiguresToSaveData();
-            
-            return SaveData;
+            foreach (var item in decorations)
+            {
+                if (item.decoratedFigure == null)
+                    GroupDecorations.Add(item);
+                else
+                    FigureDecorations.Add(item);
+            }
+
+
+            saveData = GrouplessFiguresToSaveData(GrouplessFigures, 0);
+            saveData += GroupedFiguresToSaveData();
+
+            foreach (var item in SaveData.Instance.CurrentDrawState.Groups)
+            {
+                item.Figures = new List<Figure>();
+            }
+
+            return saveData;
         }
 
         private string GrouplessFiguresToSaveData(List<Figure> GrouplessFigures, int Tabs)
@@ -218,7 +233,15 @@ namespace DEP
             foreach (var item in GrouplessFigures)
             {
                 SaveData += AddTabs(Tabs);
-                SaveData += item.StrategyFigure.ToString(item);                
+                SaveData += item.StrategyFigure.ToString(item);
+                foreach (var deco in FigureDecorations)
+                {
+                    if (item.Equals(deco.decoratedFigure))
+                    {
+                        SaveData += AddTabs(Tabs);
+                        SaveData += deco.ToString(deco);
+                    }
+                }
             }
 
             return SaveData;
@@ -233,6 +256,9 @@ namespace DEP
             }
             return Tabs;
         }
+
+        List<Decoration> GroupDecorations = new List<Decoration>();
+        List<Decoration> FigureDecorations = new List<Decoration>();
 
         private string GroupedFiguresToSaveData()
         {
@@ -250,20 +276,37 @@ namespace DEP
 
 
             string saveData = "";
-            int tabs = 1;
+            int Tabs = 1;
             foreach (var item in groups)
             {
                 if (item.IsInGroup == null)
                 {
                     saveData += $"group {item.Figures.Count+item.Groups.Count}{Environment.NewLine}";
-                    saveData += GrouplessFiguresToSaveData(item.Figures, tabs);
+                    string ornaments = GetGroupOrnament(item);
+                    if(!String.IsNullOrEmpty(ornaments))
+                    {
+                        saveData += AddTabs(Tabs);
+                        saveData += ornaments;
+                    }
+                    saveData += GrouplessFiguresToSaveData(item.Figures, Tabs);
                     if (item.Groups.Count > 0)
-                        saveData += RecursiveIO(item.Groups, tabs);
+                        saveData += RecursiveIO(item.Groups, Tabs);
                 }
             }
             
-            
+
             return saveData;
+        }
+
+        private string GetGroupOrnament(Group group)
+        {
+            string data = "";
+            foreach (var item in GroupDecorations)
+            {
+                if (item.decoratedGroup.ID == group.ID)
+                    data += item.ToString(item);
+            }
+            return data;
         }
 
         private string RecursiveIO(List<Group> groups, int tabs)
@@ -273,6 +316,7 @@ namespace DEP
             {
                 saveData += AddTabs(tabs);
                 saveData += $"group {item.Figures.Count + item.Groups.Count}{Environment.NewLine}";
+                saveData += GetGroupOrnament(item);
                 saveData += GrouplessFiguresToSaveData(item.Figures, tabs+1);
                 if (item.Groups.Count > 0)
                     saveData += RecursiveIO(item.Groups, tabs+1);
