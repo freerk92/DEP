@@ -27,7 +27,7 @@ namespace DEP
 
         public Form1()
         {
-            SaveData.Instance.CurrentDrawState = new DrawState(new List<Figure>(), new List<Group>());
+            SaveData.Instance.CurrentDrawState = new DrawState(new List<Figure>(), new List<Group>(), new List<Decoration>());
             inv.InsertCommands(save);
             inv.InsertCommands(load);
             inv.InsertCommands(undo);
@@ -82,12 +82,10 @@ namespace DEP
             {
                 drawFigure.StrategyFigure.Draw(e, drawFigure);
             }
-            foreach(var deco in SaveData.Instance.DecorationList)
+            foreach(var deco in SaveData.Instance.CurrentDrawState.Decorations)
             {
                 deco.Draw(e, deco.decoratedFigure);
             }
-            if(figure != null)
-                figure.StrategyFigure.Draw(e, figure);
         }
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
@@ -112,20 +110,26 @@ namespace DEP
 
         public DrawState CloneDrawState()
         {
+            var OriginalDrawState = SaveData.Instance.CurrentDrawState;
             var figures = new List<Figure>();
-            foreach (var item in SaveData.Instance.CurrentDrawState.Figures)
+            foreach (var item in OriginalDrawState.Figures)
             {
                 figures.Add(new Figure(item));
             }
 
             var groups = new List<Group>();
-            foreach(var item in SaveData.Instance.CurrentDrawState.Groups)
+            foreach (var item in OriginalDrawState.Groups)
             {
                 groups.Add(new Group(item));
             }
 
+            var decorations = new List<Decoration>();
+            foreach (var item in OriginalDrawState.Decorations)
+            {
+                decorations.Add(new Decoration(item));
+            }
 
-            var drawState = new DrawState(figures, groups);
+            var drawState = new DrawState(figures, groups, decorations);
             return drawState;
         }
 
@@ -249,7 +253,8 @@ namespace DEP
                 return false;
             });
 
-
+            if (selectedFigure == null)
+                return;
             SelectedFigure = SetSelectedFigure(selectedFigure);
 
 

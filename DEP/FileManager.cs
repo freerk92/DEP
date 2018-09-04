@@ -61,7 +61,7 @@ namespace DEP
 
         List<Group> Groups = new List<Group>();
         List<Figure> Figures = new List<Figure>();
-
+        List<Decoration> Decorations = new List<Decoration>();
         private void DecryptIO(string SaveFile)
         {
             GroupID = 0;
@@ -89,8 +89,8 @@ namespace DEP
                 }
             }
 
-            SaveData.Instance.CurrentDrawState = new DrawState(Figures, Groups);
-            SaveData.Instance.HistoryList.Add(new DrawState(Figures, Groups));
+            SaveData.Instance.CurrentDrawState = new DrawState(Figures, Groups, Decorations);
+            SaveData.Instance.HistoryList.Add(new DrawState(Figures, Groups, Decorations));
         }
 
         private List<Figure> GetFiguresFromGroups(List<Group> groups)

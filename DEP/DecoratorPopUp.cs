@@ -37,37 +37,82 @@ namespace DEP
         public void Save_Click(object sender, EventArgs e)
         {
             SaveData.Instance.HistoryList.Add(CloneDrawState());
+            var newDrawState = new DrawState(CloneDrawState());
+
             if(figure != null)
             {
-                foreach (var item in SaveData.Instance.CurrentDrawState.Figures)
-                {
-                    if(item.Equals(figure))
-                    {
-                        TopDecoration decoration = new TopDecoration(figure, DecoratorText.Text);
-                        SaveData.Instance.DecorationList.Add(decoration);
-                    }
-                }
+                newDrawState = AddDecoratorToFigure(newDrawState);
             }
+            else{
+                newDrawState = AddDecoratorToGroup(newDrawState);
+            }
+            SaveData.Instance.CurrentDrawState = new DrawState(newDrawState);
             form.Refresh();
             this.Hide();
         }
 
+        private DrawState AddDecoratorToGroup(DrawState newDrawState)
+        {
+            foreach (var item in newDrawState.Groups)
+            {
+                if (item.ID == group.ID)
+                {
+                    DecorationPosition position = GetPosition();
+                    Decoration decoration = new Decoration(group, DecoratorText.Text, position);
+                    newDrawState.Decorations.Add(decoration);
+                }
+            }
+            return newDrawState;
+        }
+
+        private DrawState AddDecoratorToFigure(DrawState newDrawState)
+        {
+            foreach (var item in newDrawState.Figures)
+            {
+                if (item.Equals(figure))
+                {
+                    DecorationPosition position = GetPosition();
+                    Decoration decoration = new Decoration(figure, DecoratorText.Text, position);
+                    newDrawState.Decorations.Add(decoration);
+                }
+            }
+            return newDrawState;
+        }
+
+        private DecorationPosition GetPosition()
+        {
+            if (Bottom.Checked)
+                return DecorationPosition.Bottom;
+            if (Left.Checked)
+                return DecorationPosition.Left;
+            if (Right.Checked)
+                return DecorationPosition.Right;
+
+            return DecorationPosition.Top;
+        }
+
         public DrawState CloneDrawState()
         {
+            var OriginalDrawState = SaveData.Instance.CurrentDrawState;
             var figures = new List<Figure>();
-            foreach (var item in SaveData.Instance.CurrentDrawState.Figures)
+            foreach (var item in OriginalDrawState.Figures)
             {
                 figures.Add(new Figure(item));
             }
 
             var groups = new List<Group>();
-            foreach (var item in SaveData.Instance.CurrentDrawState.Groups)
+            foreach (var item in OriginalDrawState.Groups)
             {
                 groups.Add(new Group(item));
             }
 
+            var decorations = new List<Decoration>();
+            foreach (var item in OriginalDrawState.Decorations)
+            {
+                decorations.Add(new Decoration(item));
+            }
 
-            var drawState = new DrawState(figures, groups);
+            var drawState = new DrawState(figures, groups, decorations);
             return drawState;
         }
     }

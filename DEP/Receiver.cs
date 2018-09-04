@@ -25,8 +25,13 @@ namespace DEP
                 groups.Add(new Group(item));
             }
 
+            var decorations = new List<Decoration>();
+            foreach (var item in OriginalDrawState.Decorations)
+            {
+                decorations.Add(new Decoration(item));
+            }
 
-            var drawState = new DrawState(figures, groups);
+            var drawState = new DrawState(figures, groups, decorations);
             return drawState;
         }
 

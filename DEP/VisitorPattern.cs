@@ -23,21 +23,30 @@ namespace DEP
         private MouseEventArgs e;
         List<Figure> newFigures;
         List<Group> newGroup;
-
+        List<Decoration> newDecorations;
 
         public ResizeVisitor(MouseEventArgs e)
         {
             this.e = e;
             newFigures = new List<Figure>(SaveData.Instance.CurrentDrawState.Figures);
             newGroup = new List<Group>(SaveData.Instance.CurrentDrawState.Groups);
+            newDecorations = new List<Decoration>(SaveData.Instance.CurrentDrawState.Decorations);
         }
 
         public void Visit(Figure figure)
         {
-            int index = newFigures.FindIndex(a => a == figure);
-            newFigures[index].end = e.Location;
+            List<int> DecorationsToEdit = GetDecorationsToEdit(figure);
 
-            var drawState = new DrawState(newFigures, newGroup);
+            int index = newFigures.FindIndex(a => a == figure);
+            figure.end = e.Location;
+
+            foreach (var decoIndex in DecorationsToEdit)
+            {
+                newDecorations[decoIndex].decoratedFigure = newFigures[index];
+                newDecorations[decoIndex].SetLocation();
+            }
+
+            var drawState = new DrawState(newFigures, newGroup, newDecorations);
             SaveData.Instance.CurrentDrawState = drawState;
         }
 
@@ -69,15 +78,46 @@ namespace DEP
 
             foreach (var item in groupFigures)
             {
+                
                 var index = newFigures.IndexOf(item);
                 var resizedItem = resizeFigure(item, XDifference, YDifference);
                 if (!item.IsMainGroupFigure)
                     //resizedItem = AddOffsetToResize(mainFigure, resizedItem, XDifference, YDifference);
                 newFigures[index] = resizedItem;
+
             }
 
-            var drawState = new DrawState(newFigures, newGroup);
+            List<int> DecorationsToEdit = GetDecorationsToEdit(group);
+            foreach (var decoIndex in DecorationsToEdit)
+            {
+                newDecorations[decoIndex].SetLocation();
+            }
+
+            var drawState = new DrawState(newFigures, newGroup, newDecorations);
             SaveData.Instance.CurrentDrawState = drawState;
+        }
+
+        private List<int> GetDecorationsToEdit(Figure item)
+        {
+            var intList = new List<int>();
+            for (int i = 0; i < newDecorations.Count(); i++)
+            {
+                if (item.Equals(newDecorations[i].decoratedFigure))
+                    intList.Add(i);
+            }
+            return intList;
+        }
+
+        private List<int> GetDecorationsToEdit(Group item)
+        {
+            var intList = new List<int>();
+
+            for (int i = 0; i < newDecorations.Count(); i++)
+            {
+                if (item.ID == newDecorations[i].decoratedGroup.ID)
+                    intList.Add(i);
+            }
+            return intList;
         }
 
         private Figure resizeFigure(Figure item, double xDifference, double yDifference)
@@ -103,36 +143,58 @@ namespace DEP
         private MouseEventArgs e;
         List<Figure> newFigures;
         List<Group> newGroup;
-
+        List<Decoration> newDecorations;
 
         public MoveVisitor(MouseEventArgs e)
         {
             this.e = e;
             newFigures = new List<Figure>(SaveData.Instance.CurrentDrawState.Figures);
             newGroup = new List<Group>(SaveData.Instance.CurrentDrawState.Groups);
+            newDecorations = new List<Decoration>(SaveData.Instance.CurrentDrawState.Decorations);
         }
 
-        void IVisitor.Visit(Figure figure)
+        private List<int> GetDecorationsToEdit(Figure item)
+        {
+            var intList = new List<int>();
+            for (int i = 0; i < newDecorations.Count(); i++)
+            {
+                if (item.Equals(newDecorations[i].decoratedFigure))
+                    intList.Add(i);
+            }
+            return intList;
+        }
+
+        private List<int> GetDecorationsToEdit(Group item)
+        {
+            var intList = new List<int>();
+
+
+            for (int i = 0; i < newDecorations.Count(); i++)
+            {
+                if (item.ID == newDecorations[i].decoratedGroup.ID)
+                    intList.Add(i);
+            }
+            return intList;
+        }
+
+
+        public void Visit(Figure figure)
         {
             int x = Math.Abs(figure.start.X - figure.end.X);
             int y = Math.Abs(figure.start.Y - figure.end.Y);
 
-            Decoration decoration = null;
+            List<int> DecorationsToEdit = GetDecorationsToEdit(figure);
 
-            foreach (var item in SaveData.Instance.DecorationList)
-            {
-                if (item.decoratedFigure.Equals(figure))
-                {
-                    item.ornamentLocation = new Point(e.Location.X + (x / 2), e.Location.Y - 25);
-                    decoration = item;
-                }
-            }
-
+            int index = newFigures.FindIndex(a => a == figure);
             figure.start = e.Location;
             figure.end = new Point(e.X + x, e.Y + y);
-            if (decoration != null)
-                decoration.decoratedFigure = figure;
-            var drawState = new DrawState(newFigures, newGroup);
+
+            foreach (var decoIndex in DecorationsToEdit)
+            {
+                newDecorations[decoIndex].decoratedFigure = figure;
+                newDecorations[decoIndex].SetLocation();
+            }
+            var drawState = new DrawState(newFigures, newGroup, newDecorations);
             SaveData.Instance.CurrentDrawState = drawState;
         }
 
@@ -156,6 +218,8 @@ namespace DEP
                 {
                     if (groupFigure.Equals(item))
                     {
+
+                        int index = newFigures.FindIndex(a => a.Equals(item));
                         groupFigure.start = new Point(groupFigure.start.X - XDifference, groupFigure.start.Y - YDifference);
                         groupFigure.end = new Point(groupFigure.end.X - XDifference, groupFigure.end.Y - YDifference);
                         item.start = groupFigure.start;
@@ -164,7 +228,20 @@ namespace DEP
                 }
             }
 
-            var drawState = new DrawState(newFigures, newGroup);
+            try
+            {
+            List<int> DecorationsToEdit = GetDecorationsToEdit(group);
+            foreach (var decoIndex in DecorationsToEdit)
+            {
+                newDecorations[decoIndex].SetLocation();
+            }
+
+            }
+            catch (Exception e)
+            {
+                var v = e.Message;
+            }
+            var drawState = new DrawState(newFigures, newGroup, newDecorations);
             SaveData.Instance.CurrentDrawState = drawState;
         }
 

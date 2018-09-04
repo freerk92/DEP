@@ -7,6 +7,7 @@ namespace DEP
 {
     public class Figure : IVisitable
     {
+        Guid guid = new Guid();
         // The point user press Mouse Down
         public Point start;
         // The point user let Mouse Up
@@ -34,16 +35,22 @@ namespace DEP
                 return IsSelected ? Pens.Red : Pens.Black;
             }
         }
+        public Figure(){}
+
+        public Figure(Group group) { }
+
         public Figure(Figure item)
         {
             start = item.start;
             end = item.end;
             group = item.group;
             StrategyFigure = item.StrategyFigure;
+            guid = item.guid;
         }
 
         public Figure(IFigure figure)
         {
+            guid = Guid.NewGuid();
             this.StrategyFigure = figure;
         }
 
@@ -64,7 +71,7 @@ namespace DEP
         public override bool Equals(object obj)
         {
             Figure compareFigure = (Figure)obj;
-            return (start == compareFigure.start && end == compareFigure.end);
+            return guid == compareFigure.guid;
         }
 
 
