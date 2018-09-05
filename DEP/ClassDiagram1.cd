@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DEP.Figure">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="DEP.Figure.Direction" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Figure.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="DEP.Figure.Ellipse" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Figure.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="DEP.Figure.xRectangle" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Figure.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAIAAIgAgAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Figure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DEP.Form1">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IQCAAAQEAKAAKAAAAAGABAASABgAAAAgABAgQAEAAAA=</HashCode>
+      <FileName>Form1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DEP.Program" Collapsed="true">
+    <Position X="13" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DEP.Properties.Resources" Collapsed="true">
+    <Position X="14.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DEP.Properties.Settings">
+    <Position X="16.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
